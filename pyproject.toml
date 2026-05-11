@@ -1,0 +1,27 @@
+# pyproject.toml
+#
+# Purpose:
+# - Defines this repository as an installable Python project (so imports work reliably).
+# - Declares Python version requirement and dependencies for the ETL code.
+#
+[project]
+name = "blent-etl"
+version = "0.1.0"
+description = "ETL pipeline from MongoDB Atlas to PostgreSQL DWH"
+requires-python = ">=3.11"
+dependencies = [
+  "pymongo>=4.7",
+  "psycopg[binary]>=3.2",
+  "python-dotenv>=1.0",
+  "python-dateutil>=2.9",
+]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

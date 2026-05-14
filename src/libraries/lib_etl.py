@@ -1,43 +1,29 @@
 """Core data pipeline functions (phase-oriented).
 
 Purpose:
-- Provide reusable building blocks for data ingestion / transformation / loading.
-- Phase 1 implements a daily ETL from MongoDB (Atlas) to PostgreSQL (Render).
+- Provide reusable building blocks for ETL.
+- Phase 1 implements daily ETL from MongoDB (Atlas) to PostgreSQL (Render).
 - Future phases can add new modules while reusing shared helpers from this package.
+
+N.B.: Timezone = UTC
 """
 
 import logging
 import json
-import psycopg # PostgreSQL connection
 import pandas as pd
 
-#from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from typing import Any, Iterable
 from dateutil.relativedelta import relativedelta
 from pathlib import Path
-from typing import Any
+from pymongo import MongoClient, collection
 from sqlalchemy import text, Engine, create_engine  # Pandas <> Postgres
 
-# @dataclass(frozen=True) # ~ constant instance
-# class TopProduct:
-#     """Daily snapshot record to store in DWH."""
 
-#     product_id: str  
-#     nb_reviews: int
-#     average_rating: float
-#     oldest_rating: float
-#     newest_rating: float
-
-
-# -----------------------------
 # DB connections
-# -----------------------------
 
 def connect_mongo(*, uri: str):
     """Create and return a MongoDB client."""
-
-    from pymongo import MongoClient
     
     client = MongoClient(
         uri,
@@ -80,13 +66,11 @@ def connect_postgres(*, dsn_string: str):
         raise e   
 
 
-# -----------------------------
 # Aggregation
-# -----------------------------
 
 def get_timeframe_start(
-    *, 
-    timeframe_end: int, 
+    *,
+    timeframe_end: int,
     lookback_months: int
 ) -> int:
     """Compute the datetime threshold for the lookback window.
@@ -98,7 +82,15 @@ def get_timeframe_start(
 
     delta_datetime = relativedelta(months=lookback_months)
     end_timestamp = timeframe_end
-    end_datetime = datetime.fromtimestamp(end_timestamp, tz=timezone.utc)
+
+    # Case of Datetime (original dataset was updated)
+    if isinstance(end_timestamp, datetime):
+        end_datetime = end_timestamp.replace(tzinfo=timezone.utc)
+
+    # Case of Timestamp (original dataset unchanged)
+    else:
+        end_datetime = datetime.fromtimestamp(end_timestamp, tz=timezone.utc)
+
     start_datetime = end_datetime - delta_datetime
     logging.info(f"timeframe_start={start_datetime}")
 
@@ -110,13 +102,14 @@ def extract_and_transform(
     *,
     reviews: Iterable[dict[str, Any]],
     timeframe_start: int,
+    top_n: int
 ) -> pd.DataFrame:
     """Execute pipeline:
     1 - Filter recent reviews
     2 - Sort by timestamp
     3 - Group by product id "asin"
     4 - Sort by rating & nb of reviews
-    5 - Get Top-15
+    5 - Get Top products
 
     Output per product as Pandas:
     - average rating 
@@ -138,7 +131,7 @@ def extract_and_transform(
         },
         {   # Group by product id "asin"
             "$group": {
-                "_id": "$asin",                          
+                "_id": "$asin",  # compulsory "_id" for a group by                       
                 "nb_reviews": {"$sum": 1},             
                 "average_rating": {"$avg": "$overall"},  
                 "oldest_rating": {"$first": "$overall"},  
@@ -151,8 +144,8 @@ def extract_and_transform(
                 "nb_reviews": -1
             }
         },
-        {   # Get Top-15
-            "$limit": 15  
+        {   # Get Top products
+            "$limit": top_n
         }
     ]
 
@@ -162,50 +155,49 @@ def extract_and_transform(
     # Get DataFrame
     df = pd.DataFrame([p for p in result_cursors])
 
-    # Log Top-15 products
-    logging.info(f"Top-15 products in Datalake\n{df}")
+    # Log Top products
+    logging.info(f"Top-{top_n} products in Datalake\n{df}")
     return df
 
-# -----------------------------
+
 # Load (insert/upsert into DWH)
-# -----------------------------
-
-def upsert_dwh(
-    *,
-    db_dwh: Any,
-    rows: pd.DataFrame,
-) -> None:
-    """Insert the daily Top-N snapshot into PostgreSQL (upsert).
-
-    Recommended table key to avoid duplicates:
-    - UNIQUE(run_date, asin)
-
-    TODO:
-    - Create table in Postgres and implement:
-        INSERT ... ON CONFLICT (run_date, asin)
-        DO UPDATE SET avg_rating = EXCLUDED.avg_rating, ...
-    - Use executemany/batch inserts.
-    - Commit transaction.
-    """
 
 def upsert_dwh(*, db_dwh, table_name: str, df: pd.DataFrame):
 
-    # Add Snapshot Date
-    df['snapshot_date'] = pd.Timestamp.now().date()
+    # Add Snapshot Date (UTC for consistency)
+    today = datetime.now(timezone.utc).date()
+    df['snapshot_date'] = today
+    df.rename(columns={'_id': 'product_id'}, inplace=True)
     
+    try:
+        with db_dwh.begin() as db_connection:
 
-## To DO :
-## Create table before ; Add index to table
+            # Clean up today's records to avoid duplicates
+            sql_query = text(
+                f"""
+                DELETE FROM public.{table_name} 
+                WHERE snapshot_date = :param_date
+                """
+            )
+            result = db_connection.execute(
+                sql_query, 
+                {"param_date": today}
+            )
+            logging.info(f"DWH Today's records:{result.rowcount} deleted")
+            
+            # Insert today's records to DWH Table
+            df.to_sql(
+                name=table_name, 
+                con=db_connection, 
+                if_exists='append',  # append != replace table contents
+                index=False  # don't add a table field = df's index
+            )
+            logging.info(f"✅ Successfully loaded {len(df)} records to DWH.")
 
-
-    # Write to DWH Table
-    df.to_sql(
-        name=table_name, 
-        con=db_dwh, 
-        if_exists='append', # keeps historical data
-        index=False
-    )
-    logging.info(f"✅ Successfully loaded {len(df)} records to DWH.")
+    except Exception as e:
+        logging.error(f"❌ Failed to load records to DWH on {today}.")
+        logging.error(f"🛑 {str(e)}")
+        raise e   
 
     return
 
@@ -216,8 +208,8 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def get_max_timestamp(collection:Any):
-    last_record = collection.find_one(
+def get_max_timestamp(mongo_collection: collection.Collection) -> int:
+    last_record = mongo_collection.find_one(
         sort=[("unixReviewTime", -1)], 
         projection={"unixReviewTime": 1}
     )
@@ -231,21 +223,21 @@ def seed_datalake(
     *,  # all args should be key=value
     mongo_client: Any,
     database: str,
-    collection: str,
+    collection_name: str,
     jsonl_path: str | Path,
     batch_size: int = 2_000,
 ) -> int:
     """
-    Seed a MongoDB collection from a JSON Lines file, but only if the collection is empty.
+    Seed MongoDB collection from JSON Lines file, but only if empty collection
 
     - Expects JSONL: one JSON object per line.
     - Uses batching to avoid loading the full file into memory.
 
     Returns the number of inserted documents (0 if already seeded).
     """
-    col: Collection = mongo_client[database][collection]
+    col: collection.Collection = mongo_client[database][collection_name]
 
-    # If there is already at least one document, we consider the collection seeded.
+    # If there is already at least 1 document, we consider collection seeded.
     if col.find_one(projection={"_id": 1}) is not None:
         return 0
 
@@ -301,13 +293,14 @@ def init_dwh(db_engine: Engine, table_name: str) -> None:
                 product_id VARCHAR(50),
                 nb_reviews INTEGER,
                 average_rating NUMERIC(3, 2),
+                oldest_rating NUMERIC(3, 2),
                 newest_rating NUMERIC(3, 2),
                 snapshot_date DATE,
                 -- No duplicates on same day
                 PRIMARY KEY (product_id, snapshot_date) 
             );
-            CREATE INDEX IF NOT EXISTS idx_snapshot_date
-                ON public.daily_snapshot (snapshot_date);
+            CREATE INDEX IF NOT EXISTS idx_{table_name}_snapshot_date
+                ON public.{table_name} (snapshot_date);
         """)
         
         with db_engine.begin() as conn:

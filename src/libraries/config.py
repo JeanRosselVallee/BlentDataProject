@@ -48,7 +48,10 @@ def load_env() -> tuple[MongoConfig, PostgresConfig, EtlConfig]:
     - ETL_MONGO_COLLECTION
     - ETL_POSTGRES_DSN
     - ETL_POSTGRES_TABLE_NAME
-    - ETL_SEED_FILE
+
+    Optional:
+    - ETL_SEED_FILE (defaults to data/Video_Games_5.json)
+    - ETL_LOOKBACK_MONTHS, ETL_TOP_N
     """
 
     mongo_uri = os.environ.get("ETL_MONGO_URI", "").strip()
@@ -77,10 +80,13 @@ def load_env() -> tuple[MongoConfig, PostgresConfig, EtlConfig]:
 
     mongo = MongoConfig(uri=mongo_uri, database=mongo_db, collection=mongo_collection)
     pg = PostgresConfig(dsn=pg_dsn, table_name=pg_table_name)
-    etl = EtlConfig(
-        seed_file=seed_file,
-        lookback_months=int(os.environ.get("ETL_LOOKBACK_MONTHS", "6")),
-        top_n=int(os.environ.get("ETL_TOP_N", "15")),
-    )
+    try:
+        etl = EtlConfig(
+            seed_file=seed_file,
+            lookback_months=int(os.environ.get("ETL_LOOKBACK_MONTHS", "6")),
+            top_n=int(os.environ.get("ETL_TOP_N", "15")),
+        )
+    except ValueError as e:
+        raise RuntimeError(f"Invalid integer value for configuration: {e}") from e
+    
     return mongo, pg, etl
-

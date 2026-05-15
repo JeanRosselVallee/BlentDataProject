@@ -5,15 +5,14 @@ Run the Phase 1 daily ETL job:
 - Aggregate per game
 - Select Top 15
 - Upsert into PostgreSQL DWH
-
-This script is intended to be executed by Render Cron Job.
+This script is intended to be executed by orchestrator Airflow
 Configuration is read from env variables ETL_* in etl_lib/config.py).
 """
 
 import logging
-import libraries.lib_etl as etl
-import libraries.lib_cmn as cmn
-import libraries.config as cfg
+import src.lib_etl as etl
+import src.lib_cmn as cmn
+import src.config as cfg
 
 from datetime import datetime, timezone
 from dotenv import load_dotenv

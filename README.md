@@ -27,7 +27,7 @@ Create a virtual env, install, then run:
 ```bash
 python -m pip install -r requirements.txt
 python -m pip install -e .
-python scripts/run_etl.py
+python -m scripts.run
 ```
 
 which gets records of previous day.
@@ -61,8 +61,4 @@ Manual execution for a specific, isolated date.
 
 ---
 **Note:** All modes call the same core logic:
-`python scripts/run_etl.py --scan_date <YYYY-MM-DD> --platform <PLATFORM>`
-
-
-
-added parameters to run_etl.py: sacndate & platform. implemented Argument Parser 
+`python scripts.run --scan_date <YYYY-MM-DD> --platform <PLATFORM>`

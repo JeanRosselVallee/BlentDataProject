@@ -1,12 +1,7 @@
 """Configuration loading for the ETL phase (Phase 1).
 
 Purpose:
-- Centralize ETL environment variables (MongoDB Atlas source + PostgreSQL DWH).
-- Keep ETL configuration isolated so future phases can add their own `config.py`.
-
-Naming convention:
-- All ETL-related environment variables are prefixed with `ETL_` to avoid
-  collisions with future phases.
+- Centralize environment variables (MongoDB Atlas source + PostgreSQL DWH).
 """
 
 from dataclasses import dataclass
@@ -43,37 +38,37 @@ def load_env() -> tuple[MongoConfig, PostgresConfig, EtlConfig]:
     """Load configuration from environment variables.
 
     Required:
-    - ETL_MONGO_URI
-    - ETL_MONGO_DB
-    - ETL_MONGO_COLLECTION
-    - ETL_POSTGRES_DSN
-    - ETL_POSTGRES_TABLE_NAME
+    - MONGO_URI
+    - MONGO_DB
+    - MONGO_COLLECTION
+    - POSTGRES_DSN
+    - POSTGRES_TABLE_NAME
 
     Optional:
-    - ETL_SEED_FILE (defaults to data/Video_Games_5.json)
-    - ETL_LOOKBACK_MONTHS, ETL_TOP_N
+    - SEED_FILE (defaults to data/Video_Games_5.json)
+    - LOOKBACK_MONTHS, TOP_N
     """
 
-    mongo_uri = os.environ.get("ETL_MONGO_URI", "").strip()
-    mongo_db = os.environ.get("ETL_MONGO_DB", "").strip()
-    mongo_collection = os.environ.get("ETL_MONGO_COLLECTION", "").strip()
-    pg_dsn = os.environ.get("ETL_POSTGRES_DSN", "").strip()
-    pg_table_name = os.environ.get("ETL_POSTGRES_TABLE_NAME", "").strip()
-    seed_file = os.environ.get("ETL_SEED_FILE", "data/Video_Games_5.json").strip()
+    mongo_uri = os.environ.get("MONGO_URI", "").strip()
+    mongo_db = os.environ.get("MONGO_DB", "").strip()
+    mongo_collection = os.environ.get("MONGO_COLLECTION", "").strip()
+    pg_dsn = os.environ.get("POSTGRES_DSN", "").strip()
+    pg_table_name = os.environ.get("POSTGRES_TABLE_NAME", "").strip()
+    seed_file = os.environ.get("SEED_FILE", "data/Video_Games_5.json").strip()
 
     missing: list[str] = []
     if not mongo_uri:
-        missing.append("ETL_MONGO_URI")
+        missing.append("MONGO_URI")
     if not mongo_db:
-        missing.append("ETL_MONGO_DB")
+        missing.append("MONGO_DB")
     if not mongo_collection:
-        missing.append("ETL_MONGO_COLLECTION")
+        missing.append("MONGO_COLLECTION")
     if not pg_dsn:
-        missing.append("ETL_POSTGRES_DSN")
+        missing.append("POSTGRES_DSN")
     if not pg_table_name:
-        missing.append("ETL_POSTGRES_TABLE_NAME")
+        missing.append("POSTGRES_TABLE_NAME")
     if not seed_file:
-        missing.append("ETL_SEED_FILE")
+        missing.append("SEED_FILE")
 
     if missing:
         raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
@@ -83,8 +78,8 @@ def load_env() -> tuple[MongoConfig, PostgresConfig, EtlConfig]:
     try:
         etl = EtlConfig(
             seed_file=seed_file,
-            lookback_months=int(os.environ.get("ETL_LOOKBACK_MONTHS", "6")),
-            top_n=int(os.environ.get("ETL_TOP_N", "15")),
+            lookback_months=int(os.environ.get("LOOKBACK_MONTHS", "6")),
+            top_n=int(os.environ.get("TOP_N", "15")),
         )
     except ValueError as e:
         raise RuntimeError(f"Invalid integer value for configuration: {e}") from e

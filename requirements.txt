@@ -1,13 +1,9 @@
-#
-# requirements.txt
-#
+# Syntax : 
+#     pip install -r requirements.txt
 # Purpose:
 # - Minimal runtime dependencies for the ETL skeleton (Python 3.11+).
 # - Used by local development and may be used by Render during builds.
-#
-# Note:
-# - Versions are intentionally loose for now; pin later once your environment is stable.
-#
+
 pymongo>=4.7
 #psycopg[binary]>=3.2
 python-dotenv>=1.0
@@ -16,3 +12,6 @@ python-dateutil>=2.9
 pandas>=3.0.2
 sqlalchemy>=2.0.49
 psycopg2-binary>=2.9.12  # interface PostgreSQL-Python
+# Airflow requires Python 3.8-3.11 for version 2.9.x
+apache-airflow
+apache-airflow-providers-standard

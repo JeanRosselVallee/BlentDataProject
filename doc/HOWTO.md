@@ -63,12 +63,25 @@ If needed, add WindowsApps to PATH:
 
 - Press `Ctrl+P`
 - Run: `Python: Select Interpreter`
-- Select: Python 3.13
+- Select: Python 3.11 (Required for Airflow compatibility)
 
 ## Environment
 
 ### Create the project virtual environment
+**Note for Windows:** If you get an error saying `python3.11` is not recognized, it is because Windows uses the Python Launcher `py` to target specific versions.
 
+First, verify which versions are installed:
+```powershell
+py --list
+```
+
+### If multiple Python versions are installed (use Python Launcher):
+```powershell
+py -3.11 -m venv .venv
+# If 3.11 is not installed, download it from python.org
+```
+
+### Standard creation:
 ```powershell
 python -m venv .venv 
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
@@ -94,7 +107,7 @@ deactivate
 
 ```powershell
 python -m pip install -e .
-python ./scripts/run_etl.py 
+python -m scripts.run
 ```
 
 ### Populate DB
@@ -159,4 +172,3 @@ Get-Content Project1.txt | ForEach-Object {
     ""; "" 
 } | Out-File Full_Project_Snapshot.txt
 ```
-

@@ -11,9 +11,10 @@ N.B.: Timezone = UTC
 import logging
 import json
 import pandas as pd
+import argparse  # Script arguments parsing
 
 from datetime import datetime, timezone
-from typing import Any, Iterable
+from typing import Any, Iterable, Union
 from dateutil.relativedelta import relativedelta
 from pathlib import Path
 from pymongo import MongoClient, collection
@@ -39,7 +40,8 @@ def connect_mongo(*, uri: str):
         logging.info("✅ Connected to MongoDB")    
     except Exception as e:         
         logging.error("❌ Failed to connect to MongoDB")
-        logging.error(f"🛑 {str(e)}")
+        error_label = e.__class__.__name__
+        logging.error(f"🛑 {error_label}")
         raise e   
 
     return client
@@ -70,18 +72,18 @@ def connect_postgres(*, dsn_string: str):
 
 def get_timeframe_start(
     *,
-    timeframe_end: int,
+    scan_date: Union[datetime, int],  # 2 possible variable types 
     lookback_months: int
 ) -> int:
     """Compute the datetime threshold for the lookback window.
 
-    We only include reviews newer than (timeframe_end - lookback_months).
+    We only include reviews newer than (scan_date - lookback_months).
     """
     if lookback_months <= 0:
         lookback_months = -lookback_months
 
     delta_datetime = relativedelta(months=lookback_months)
-    end_timestamp = timeframe_end
+    end_timestamp = scan_date
 
     # Case of Datetime (original dataset was updated)
     if isinstance(end_timestamp, datetime):
@@ -162,11 +164,20 @@ def extract_and_transform(
 
 # Load (insert/upsert into DWH)
 
-def upsert_dwh(*, db_dwh, table_name: str, df: pd.DataFrame):
+def upsert_dwh(
+    *, 
+    db_dwh, 
+    table_name: str, 
+    df: pd.DataFrame, 
+    snapshot_date: Any = None
+):
+    """Upsert the dataframe into the DWH with a specific snapshot date."""
 
     # Add Snapshot Date (UTC for consistency)
-    today = datetime.now(timezone.utc).date()
-    df['snapshot_date'] = today
+    if snapshot_date is None:
+        snapshot_date = datetime.now(timezone.utc).date()
+
+    df['snapshot_date'] = snapshot_date
     df.rename(columns={'_id': 'product_id'}, inplace=True)
     
     try:
@@ -181,9 +192,9 @@ def upsert_dwh(*, db_dwh, table_name: str, df: pd.DataFrame):
             )
             result = db_connection.execute(
                 sql_query, 
-                {"param_date": today}
+                {"param_date": snapshot_date}
             )
-            logging.info(f"DWH Today's records:{result.rowcount} deleted")
+            logging.info(f"DWH records for {snapshot_date}: {result.rowcount} deleted")
             
             # Insert today's records to DWH Table
             df.to_sql(
@@ -192,12 +203,12 @@ def upsert_dwh(*, db_dwh, table_name: str, df: pd.DataFrame):
                 if_exists='append',  # append != replace table contents
                 index=False  # don't add a table field = df's index
             )
-            logging.info(f"✅ Successfully loaded {len(df)} records to DWH.")
+            logging.info(f"✅ Successfully loaded {len(df)} records for {snapshot_date}.")
 
     except Exception as e:
-        logging.error(f"❌ Failed to load records to DWH on {today}.")
+        logging.error(f"❌ Failed to load records to DWH on {snapshot_date}.")
         logging.error(f"🛑 {str(e)}")
-        raise e   
+        raise e
 
     return
 
@@ -285,6 +296,7 @@ def seed_datalake(
     logging.info(f"✅ Inserted {inserted_total} records in Datalake")
     return inserted_total
 
+
 def init_dwh(db_engine: Engine, table_name: str) -> None:
     try:
         # Create Table
@@ -310,3 +322,20 @@ def init_dwh(db_engine: Engine, table_name: str) -> None:
         logging.error(f"❌ Table {table_name} absent in DWH DB")
         logging.error(f"🛑 {str(e)}")
         raise e   
+
+
+def get_parsed_args():
+    parser = argparse.ArgumentParser(description="Run ETL daily scan.")
+    arguments = [
+        "--scan_date", 
+        "--platform"
+    ]
+    help_strings = [
+        "End date YYYY-MM-DD of scanned period. Default: now.",
+        "Platform launching the script. Default: Terminal."
+    ]
+    parser.add_argument(arguments[0], type=str, help=help_strings[0])
+    parser.add_argument(arguments[1], type=str, help=help_strings[1],
+                        default="Terminal", choices=["Terminal", "Airflow"])
+    parsed_args = parser.parse_args()
+    return parsed_args

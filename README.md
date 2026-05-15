@@ -1,7 +1,5 @@
 ## Blent Data Project
 
-### Phase 1 goal (implemented first)
-
 Daily ETL that reads reviews from MongoDB (Atlas), computes the **Top 15** best-rated games using only the **last 6 months** of reviews, and upserts the daily snapshot into a PostgreSQL Data Warehouse (Render).
 
 ### Repository layout
@@ -32,4 +30,39 @@ python -m pip install -e .
 python scripts/run_etl.py
 ```
 
-Note: the ETL functions are stubs right now (`NotImplementedError`). Next step is to implement them against your Atlas schema and your PostgreSQL table.
+which gets records of previous day.
+For any other date, run this:
+
+```bash
+python scripts/run_etl.py --scandate="YYYY-MM-DD"
+```
+
+## Airflow Orchestration
+
+This project uses Apache Airflow to manage the ETL lifecycle. The `run_etl.py` script is designed to be idempotent, allowing it to be executed in three different operational modes:
+
+### 1. Daily Scheduled Run (Production)
+The "Set-and-Forget" mode. Airflow's scheduler triggers the script automatically to process the most recently completed period.
+* **Frequency:** Daily (at 00:05 UTC).
+* **Date Logic:** Uses the `{{ ds }}` macro to pass the "logical date" (yesterday) to the `--scan_date` parameter.
+* **Purpose:** Continuous data ingestion.
+
+### 2. Backfill (Historical Recovery)
+Used to process historical data or recover from extended system outages.
+* **Mechanism:** Triggered via CLI using `airflow dags backfill` or by setting `catchup=True` with a past `start_date`.
+* **Behavior:** Airflow generates a sequence of task instances, executing the script once for every day in the missing range.
+* **Purpose:** Initial data loading or repairing large gaps in history.
+
+### 3. Ad-Hoc / Manual Run (Maintenance)
+Manual execution for a specific, isolated date.
+* **Mechanism:** Triggered via the Airflow Web UI ("Trigger DAG w/ config") or directly from the terminal.
+* **Date Logic:** A custom date is passed manually to the `--scan_date` argument.
+* **Purpose:** Debugging, testing new logic, or re-running a specific day that failed due to external API/source issues.
+
+---
+**Note:** All modes call the same core logic:
+`python scripts/run_etl.py --scan_date <YYYY-MM-DD> --platform <PLATFORM>`
+
+
+
+added parameters to run_etl.py: sacndate & platform. implemented Argument Parser 

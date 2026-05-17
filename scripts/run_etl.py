@@ -11,7 +11,6 @@ Configuration is read from env variables ETL_* in etl_lib/config.py).
 
 import logging
 import src.lib_etl as etl
-import src.lib_cmn as cmn
 import src.config as cfg
 
 from datetime import datetime, timezone
@@ -29,7 +28,7 @@ def main() -> int:
     mongo_cfg, pg_cfg, etl_cfg = cfg.load_env()
 
     # Setup logging
-    cmn.setup_logging() # setup logging from environment variables
+    etl.setup_logging() # setup logging from environment variables
     logging.info(f"🚀 ETL launched from platform: {args.platform}")
 
     # Connect to DB's
@@ -90,6 +89,7 @@ def main() -> int:
 
     except Exception as e:
         logging.error(f"❌ Main process interrupted: {e}")
+        return 1
 
 
 if __name__ == "__main__":

@@ -25,9 +25,9 @@ Set these (Render "Environment" settings or a local `.env` file):
 Create a virtual env, install, then run:
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -r requirements_etl.txt
 python -m pip install -e .
-python -m scripts.run
+python -m scripts.run_etl
 ```
 
 which gets records of previous day.

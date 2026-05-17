@@ -217,3 +217,8 @@ __marimo__/
 
 # Input Data
 data/*.json
+
+# Airflow
+.venv_airflow/
+airflow_home/  # Ignore everything in folder ...
+!airflow_home/airflow.cfg  # ... but airflow.cfg

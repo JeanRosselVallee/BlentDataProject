@@ -77,7 +77,7 @@ py --list
 
 ### If multiple Python versions are installed (use Python Launcher):
 ```powershell
-py -3.11 -m venv .venv
+py -3.11 -m venv .venv_etl
 # If 3.11 is not installed, download it from python.org
 ```
 

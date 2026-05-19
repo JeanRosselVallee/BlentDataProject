@@ -40,7 +40,7 @@ def main() -> int:
             mongo_client=mongo_client,
             database=mongo_cfg.database,
             collection_name=mongo_cfg.collection,
-            jsonl_path=etl_cfg.seed_file  
+            jsonl_path=etl_cfg.seed_file
         )
         db_datalake = mongo_client[mongo_cfg.database]
         collection_datalake = db_datalake[mongo_cfg.collection]

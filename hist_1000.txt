@@ -1,0 +1,238 @@
+    1  cd ~
+    2  ls
+    3  cd Apps/
+    4  ls
+    5  cd doublecmd/
+    6  ls
+    7  doublecmd
+    8  ./doublecmd
+    9  cd ..
+   10  rm -rf doublecmd/
+   11  apt install doublecmd-gtk
+   12  sudo apt install doublecmd-gtk
+   13  python --version
+   14  python3 --version
+   15  sudo apt_install python3.11 python3.12 python3.13
+   16  sudo apt install python3.11 python3.12 python3.13
+   17  sudo apt update
+   18  sudo apt install software-properties-common
+   19  sudo add-apt-repository ppa:deadsnakes/ppa
+   20  sudo apt update
+   21  for i in 11 12 13 ; do echo $i ; done
+   22  for i in 11 12 13 ; do echo sudo apt instal python3.$i ; done
+   23  for i in 11 12 13 ; do echo $i; sudo apt instal python3.${i} python3.${i}-venv python3.${i}-dev ; done
+   24  for i in 11 12 13 ; do echo $i; sudo apt install python3.${i} python3.${i}-venv python3.${i}-dev ; done
+   25  cd BlentDataProject/
+   26  ls
+   27  py -3.13 -m venv .venv
+   28  sudo apt install pythonpy
+   29  py -3.13 -m venv .venv
+   30  python3.13 -m venv .venv
+   31  source .venv/bin/activate
+   32  ls
+   33  python --version
+   34  python3 --version
+   35  ls -l .venv/
+   36  ls -l .venv/bin
+   37  deactivate
+   38  rm -rf .venv
+   39  python3.13 -m venv .venv
+   40  ls .venv/
+   41  ls .venv/bin
+   42  ll .venv/bin
+   43  ls -l .venv/bin
+   44  source .venv/bin/activate
+   45  python3 --version
+   46  pip install -r requirements.txt
+   47  pip install --upgrade pip
+   48  python -m scripts.run
+   49  airflow tasks test daily_reviews task_run_etl 2026-25-17
+   50  airflow tasks test daily_reviews task_run_etl 2026-05-17
+   51  airflow db init
+   52  airflow db migrate
+   53  airflow tasks test daily_reviews task_run_etl 2026-05-17
+   54  python -m scripts.airflow_dag
+   55  airflow tasks test daily_reviews task_run_etl 2026-05-17
+   56  airflow config get-value core dags_folder
+   57  ls
+   58  ls ./venv
+   59  ls ./.venv/
+   60  ls ./.venv/bin/air*
+   61  ls ./.venv/bin/airflow/ 
+   62  ls ~
+   63  chmod +x launch_airflow_etl.sh
+   64  chmod -x launch_airflow_etl.sh
+   65  ls
+   66  rm -rf .venv
+   67  history -n 50 | grep venv
+   68  history -n 5
+   69  history -h
+   70  history n 5
+   71  history -d 5
+   72  history 5
+   73  history 50 | grep venv
+   74  history 100 | grep venv
+   75  py --list
+   76  py -l
+   77  python3.13 -m venv .venv_etl
+   78  ls -a
+   79  python3.11 -m venv .venv_airflow
+   80  pip
+   81  sudo apt install python3-pip
+   82  du -sk /
+   83  df -k /
+   84  sudo chown -R jean:jean /run/media/jean/736060f4-2547-4ca7-aa7d-36044901db71/jean/
+   85  which vscode
+   86  where vscode
+   87  which vscode
+   88  vscode
+   89  which brave
+   90  ls /var/lib/snapd/
+   91  node -e 'require("fs").writeFileSync("/home/jean/snap/code/240/.local/share/vscode-sqltools/.node-runtime", process.execPath)' && exit 0
+   92  git
+   93  sudo apt install git
+   94  git
+   95  node -e 'require("fs").writeFileSync("/home/jean/snap/code/240/.local/share/vscode-sqltools/.node-runtime", process.execPath)' && exit 0
+   96  ps aux | grep airflow
+   97  ps aux | grep git
+   98  git init
+   99  git config user.name
+  100  git config --list --show-origin
+  101  history 100 | grep git
+  102  git config --list --show-origin
+  103  git status
+  104  git history
+  105  git hist
+  106  git remote add origin https://github.com/JeanRosselVallee/BlentDataProject.git
+  107  git push -u origin main
+  108  node -e 'require("fs").writeFileSync("/home/jean/snap/code/240/.local/share/vscode-sqltools/.node-runtime", process.execPath)' && exit 0
+  109  which code
+  110  ls -l /snap/bin/code
+  111  ls -l /usr/bin/snap
+  112  ls -l /snap/code/current/usr/share/code/code
+  113  cd ls -l /snap/code/current/usr/share/code/code
+  114  cd /run/media/jean/736060f4-2547-4ca7-aa7d-36044901db71/jean
+  115  ls
+  116  du -sk
+  117  du -sk ./
+  118  df -sk ./
+  119  df -k ./
+  120  du -k ./
+  121  du -k ./ | sort -k 1
+  122  du -k ./ | head
+  123  du -k ./ | head | sort -k 1
+  124  du -k ./ | head 20 | sort -k 1
+  125  du -k ./ | head -n 20 | sort -k 1
+  126  du -k ./ | head -n 20 | sort -nk 1
+  127  du -k ./ | head -n 20 | sort -nrk 1
+  128  du -k ./ | head -n 200 | sort -nrk 1 | tail
+  129  du -k ./ | head -n 200 | sort -nrk 1 | head 
+  130  du -k ./ | head -n 2000 | sort -nrk 1 | head 
+  131  du -k ./ | head -n 20000 | sort -nrk 1 | head 
+  132  du -k ./ | head -n 100000 | sort -nrk 1 | head 
+  133  du -k ./ | head -n 100000 | grep code | head
+  134  du -k ./ | head -n 100000 | grep vscode | head
+  135  cd
+  136  du -k ./ | head -n 100000 | sort -nrk 1 | head 
+  137  du -k / | head -n 100000 | sort -nrk 1 | head 
+  138  sudo du -k / | head -n 100000 | sort -nrk 1 | head 
+  139  sudo du -g / | head -n 100000 | sort -nrk 1 | head 
+  140  du -h
+  141  du --help
+  142  sudo du -m / | head -n 100000 | sort -nrk 1 | head 
+  143  for i in snap usr var; do echo $i ; done
+  144  for i in snap usr var; do echo $i ; du -m /$i | head -n 100000 | sort -nrk 1 | head; done
+  145  sudo du -ah / 2>/dev/null | sort -rh | head -n 20
+  146  sudo snap set system refresh.retain=2
+  147  sudo apt-get clean
+  148  sudo apt-get autoremove --purge
+  149  sudo journalctl --vacuum-size=100M
+  150  du -sh /home/jean/Documents/Dev/blent/BlentDataProject/airflow_home/logs
+  151  df -h
+  152  history 100 | grep venv_a
+  153  history 100 | grep activate
+  154  source .venv/bin/activate_airflow
+  155  source .venv_airflow/bin/activate
+  156  history 100 | grep airflow
+  157  ./launch_airflow_etl.sh tasks test daily_reviews task_run_etl 2026-05-17
+  158  ./launch_airflow_etl.sh tasks test daily_scan task_run_etl 2026-05-17
+  159  node -e 'require("fs").writeFileSync("/home/jean/snap/code/240/.local/share/vscode-sqltools/.node-runtime", process.execPath)' && exit 0
+  160  source .venv_airflow/bin/activate
+  161  ./launch_airflow_etl.sh tasks test daily_scan task_run_etl 2026-05-17
+  162  git status
+  163  grep airflow .gitignore
+  164  git rm --cached airflow_home/airflow.db
+  165  git rm --cached airflow_home/airflow-webserver.pid 2>/dev/null || true
+  166  git rm --cached airflow_home/airflow-scheduler.pid 2>/dev/null || true
+  167  git rm -r --cached airflow_home/logs/ 2>/dev/null || true
+  168  git status
+  169  deactivae
+  170  deactivate
+  171  ./launch_airflow_etl.sh tasks test daily_scan task_run_etl 2026-05-17
+  172  ./airflow_run_etl.sh tasks test daily_scan task_run_etl 2026-05-17
+  173  pgrep -f "airflow scheduler"
+  174  pgrep -f "airflow web"
+  175  ps aux | grep "airflow scheduler"
+  176  pgrep -of "airflow web"
+  177  "" || true
+  178  echo "" || true
+  179  a=echo "" || true
+  180  a=` echo "" || true` 
+  181  a
+  182  echo $a
+  183  echo "[$a]"
+  184  pgrep -of "airflowxxx"
+  185  a=`pgrep -of "airflowxxx"`
+  186  echo "[$a]"
+  187  a=`pgrepx -of "airflowxxx"`
+  188  echo "[$a]"
+  189  a=`pgrepx -of "airflowxxx"` ; echo "OK"
+  190  a=`pgrepx -of "airflowxxx" || true` ; echo "OK"
+  191  a=`pgrep -of "airflowxxx" || true` ; echo "OK"
+  192  a=`pgrep -of "airflowxxx" || true` ; echo "a=[$a]\nEnd"
+  193  a=`pgrep -of "airflowxxx" || true` ; echo "a=[$a]; echo "End"
+  194  node -e 'require("fs").writeFileSync("/home/jean/snap/code/240/.local/share/vscode-sqltools/.node-runtime", process.execPath)' && exit 0
+  195  echo "dwh_user:4LvQBfu7FZRJBHEV2y9JcKtbAMzPNRQb@dpg-d7v2rvfaqgkc73d3su9g-a.oregon-postgres.render.com/dwh_1cnb"
+  196  pgrep -f webserver --port 8080
+  197  a = 5 ; echo $a
+  198  a= 5 ; echo $a
+  199  a=5 ; echo $a
+  200  ./airflow_run_etl.sh tasks test daily_scan task_run_etl 2026-05-12
+  201  ./airflow_run_etl.sh 2026-05-12
+  202  ./airflow_run_etl.sh 2026-05-1b
+  203  ./airflow_run_etl.sh 2026-05-12
+  204  ./airflow_run_etl.sh 2026-05-32
+  205  ./airflow_run_etl.sh 2026-15-28
+  206  ./airflow_run_etl.sh 2026-05-12
+  207  ./airflow_run_etl.sh 2026-04-10 20260412
+  208  ./airflow_run_etl.sh 2026-04-10 2026-04-11
+  209  ls ~ 
+  210  ls -l 
+  211  ls -l ~ 
+  212  ls -l ~/airflow
+  213  ls -l ~/airflow/logs
+  214  ls -l ~/airflow/logs/scheduler/
+  215  rm -rf ~/airflow
+  216  ./airflow_run_etl.sh 2026-04-09
+  217  node -e 'require("fs").writeFileSync("/home/jean/snap/code/240/.local/share/vscode-sqltools/.node-runtime", process.execPath)' && exit 0
+  218  cp airflow.env airflow.env.template
+  219  cp .env .env.template
+  220  ./airflow_run_etl.sh 2026-04-09
+  221  pkill -f "airflow" && rm -f ${AIRFLOW_HOME}/*.pid
+  222  ./airflow_run_etl.sh
+  223  ./airflow_run_etl.sh 2026-04-09
+  224  git status
+  225  history 100 | grep git
+  226  history 200 | grep git
+  227  git push -u origin main
+  228  git status
+  229  git rm --cached airflow_home/airflow-scheduler.pid airflow_home/airflow-webserver.pid airflow_home/airflow.db airflow_home/logs/
+  230  git rm --cached -r airflow_home/logs/
+  231  git status
+  232  git rm --cached airflow_home/airflow-scheduler.out airflow_home/airflow.db
+  233  git rm --cached airflow_home/airflow-scheduler.pid airflow_home/airflow-webserver.pid airflow_home/airflow.db
+  234  git rm -r --cached .
+  235  node -e 'require("fs").writeFileSync("/home/jean/snap/code/240/.local/share/vscode-sqltools/.node-runtime", process.execPath)' && exit 0
+  236  deactivate 
+  237  ./airflow_run_etl.sh
+  238  history 1000 > hist_1000.txt

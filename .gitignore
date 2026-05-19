@@ -223,3 +223,11 @@ data/*.json
 airflow.env  # environment variables
 airflow_home/  # Ignore everything in folder ...
 !airflow_home/airflow.cfg  # ... but airflow.cfg
+
+airflow_home/airflow-scheduler.pid 
+airflow_home/airflow-webserver.pid
+airflow_home/airflow.db
+airflow_home/logs/
+airflow_home/airflow-scheduler.out 
+airflow_home/airflow.db
+

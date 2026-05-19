@@ -117,7 +117,7 @@ def get_timeframe_start(
         end_datetime = datetime.fromtimestamp(end_timestamp, tz=timezone.utc)
 
     start_datetime = end_datetime - delta_datetime
-    logging.info(f"timeframe_start={start_datetime}")
+    logging.info(f"Target timeframe from {start_datetime} to {end_datetime}.")
 
     start_timestamp = start_datetime.timestamp()
     return start_timestamp

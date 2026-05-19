@@ -11,5 +11,13 @@ SELECT product_id,
 FROM public.daily_snapshot
 LIMIT 1000;
 
-DELETE FROM public.daily_snapshot
+SELECT DISTINCT snapshot_date, count(*)
+FROM public.daily_snapshot
+GROUP BY snapshot_date
+ORDER BY snapshot_date DESC;
+
+
+
+
+-- DELETE FROM public.daily_snapshot
 --WHERE snapshot_date = '2026-05-13';

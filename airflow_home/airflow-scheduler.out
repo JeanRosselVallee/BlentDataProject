@@ -1,25 +1,47 @@
-[2026-05-17T21:41:47.466+0200] {executor_loader.py:258} INFO - Loaded executor: SequentialExecutor
-[2026-05-17T21:41:47.604+0200] {scheduler_job_runner.py:950} INFO - Starting the scheduler
-[2026-05-17T21:41:47.610+0200] {scheduler_job_runner.py:957} INFO - Processing each file at most -1 times
-[2026-05-17T21:41:47.646+0200] {manager.py:174} INFO - Launched DagFileProcessorManager with pid: 36256
-[2026-05-17T21:41:47.651+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
-[2026-05-17T21:41:47.666+0200] {settings.py:63} INFO - Configured default timezone UTC
-[2026-05-17T21:41:47.818+0200] {manager.py:406} WARNING - Because we cannot use more than 1 thread (parsing_processes = 2) when using sqlite. So we set parallelism to 1.
-[2026-05-17T21:41:56.059+0200] {scheduler_job_runner.py:435} INFO - 1 tasks up for execution:
-	<TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__ [scheduled]>
-[2026-05-17T21:41:56.060+0200] {scheduler_job_runner.py:507} INFO - DAG daily_scan has 0/16 running and queued tasks
-[2026-05-17T21:41:56.061+0200] {scheduler_job_runner.py:646} INFO - Setting the following tasks to queued state:
-	<TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__ [scheduled]>
-[2026-05-17T21:41:56.068+0200] {scheduler_job_runner.py:748} INFO - Trying to enqueue tasks: [<TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__ [scheduled]>] for executor: SequentialExecutor(parallelism=32)
-[2026-05-17T21:41:56.069+0200] {scheduler_job_runner.py:692} INFO - Sending TaskInstanceKey(dag_id='daily_scan', task_id='task_run_etl', run_id='__airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__', try_number=1, map_index=-1) to SequentialExecutor with priority 1 and queue default
-[2026-05-17T21:41:56.070+0200] {base_executor.py:169} INFO - Adding to queue: ['airflow', 'tasks', 'run', 'daily_scan', 'task_run_etl', '__airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__', '--local', '--subdir', 'DAGS_FOLDER/dag_task_etl.py']
-[2026-05-17T21:41:56.074+0200] {sequential_executor.py:84} INFO - Executing command: ['airflow', 'tasks', 'run', 'daily_scan', 'task_run_etl', '__airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__', '--local', '--subdir', 'DAGS_FOLDER/dag_task_etl.py']
-[2026-05-17T21:41:58.015+0200] {dagbag.py:588} INFO - Filling up the DagBag from /home/jean/Documents/Dev/blent/BlentDataProject/airflow_home/dags/dag_task_etl.py
-[2026-05-17T21:41:58.146+0200] {task_command.py:467} INFO - Running <TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__ [queued]> on host LAPTOP-HP
-[2026-05-17T21:42:05.553+0200] {scheduler_job_runner.py:776} INFO - Received executor event with state success for task instance TaskInstanceKey(dag_id='daily_scan', task_id='task_run_etl', run_id='__airflow_temporary_run_2026-05-17T19:41:55.086646+00:00__', try_number=1, map_index=-1)
-[2026-05-17T21:46:47.801+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
-[2026-05-17T21:51:47.878+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
-[2026-05-17T21:56:47.916+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
-[2026-05-17T22:01:47.981+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
-[2026-05-17T22:06:48.021+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
-[2026-05-17T22:11:48.082+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:13:11.836+0200] {executor_loader.py:258} INFO - Loaded executor: SequentialExecutor
+[2026-05-19T01:13:11.874+0200] {scheduler_job_runner.py:950} INFO - Starting the scheduler
+[2026-05-19T01:13:11.875+0200] {scheduler_job_runner.py:957} INFO - Processing each file at most -1 times
+[2026-05-19T01:13:11.883+0200] {manager.py:174} INFO - Launched DagFileProcessorManager with pid: 14322
+[2026-05-19T01:13:11.885+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:13:11.889+0200] {settings.py:63} INFO - Configured default timezone UTC
+[2026-05-19T01:13:11.919+0200] {manager.py:406} WARNING - Because we cannot use more than 1 thread (parsing_processes = 2) when using sqlite. So we set parallelism to 1.
+[2026-05-19T01:18:11.950+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:23:11.997+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:28:12.059+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:33:12.124+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:38:12.171+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:43:12.241+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:48:12.322+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:53:12.394+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T01:53:22.343+0200] {scheduler_job_runner.py:435} INFO - 1 tasks up for execution:
+	<TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__ [scheduled]>
+[2026-05-19T01:53:22.343+0200] {scheduler_job_runner.py:507} INFO - DAG daily_scan has 0/16 running and queued tasks
+[2026-05-19T01:53:22.344+0200] {scheduler_job_runner.py:646} INFO - Setting the following tasks to queued state:
+	<TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__ [scheduled]>
+[2026-05-19T01:53:22.347+0200] {scheduler_job_runner.py:748} INFO - Trying to enqueue tasks: [<TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__ [scheduled]>] for executor: SequentialExecutor(parallelism=32)
+[2026-05-19T01:53:22.347+0200] {scheduler_job_runner.py:692} INFO - Sending TaskInstanceKey(dag_id='daily_scan', task_id='task_run_etl', run_id='__airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__', try_number=1, map_index=-1) to SequentialExecutor with priority 1 and queue default
+[2026-05-19T01:53:22.348+0200] {base_executor.py:169} INFO - Adding to queue: ['airflow', 'tasks', 'run', 'daily_scan', 'task_run_etl', '__airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__', '--local', '--subdir', 'DAGS_FOLDER/dag_task_etl.py']
+[2026-05-19T01:53:22.351+0200] {sequential_executor.py:84} INFO - Executing command: ['airflow', 'tasks', 'run', 'daily_scan', 'task_run_etl', '__airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__', '--local', '--subdir', 'DAGS_FOLDER/dag_task_etl.py']
+[2026-05-19T01:53:23.763+0200] {dagbag.py:588} INFO - Filling up the DagBag from /home/jean/Documents/Dev/blent/BlentDataProject/airflow_home/dags/dag_task_etl.py
+[2026-05-19T01:53:23.892+0200] {task_command.py:467} INFO - Running <TaskInstance: daily_scan.task_run_etl __airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__ [queued]> on host LAPTOP-HP
+[2026-05-19T01:53:31.406+0200] {scheduler_job_runner.py:776} INFO - Received executor event with state success for task instance TaskInstanceKey(dag_id='daily_scan', task_id='task_run_etl', run_id='__airflow_temporary_run_2026-05-18T23:53:21.986486+00:00__', try_number=1, map_index=-1)
+[2026-05-19T01:58:12.438+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T02:03:12.505+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs
+[2026-05-19T02:05:01.478+0200] {dag.py:4180} INFO - Setting next_dagrun for daily_scan to 2026-05-19 00:05:00+00:00, run_after=2026-05-20 00:05:00+00:00
+[2026-05-19T02:05:01.515+0200] {scheduler_job_runner.py:435} INFO - 1 tasks up for execution:
+	<TaskInstance: daily_scan.task_run_etl scheduled__2026-05-18T00:05:00+00:00 [scheduled]>
+[2026-05-19T02:05:01.516+0200] {scheduler_job_runner.py:507} INFO - DAG daily_scan has 0/16 running and queued tasks
+[2026-05-19T02:05:01.516+0200] {scheduler_job_runner.py:646} INFO - Setting the following tasks to queued state:
+	<TaskInstance: daily_scan.task_run_etl scheduled__2026-05-18T00:05:00+00:00 [scheduled]>
+[2026-05-19T02:05:01.518+0200] {scheduler_job_runner.py:748} INFO - Trying to enqueue tasks: [<TaskInstance: daily_scan.task_run_etl scheduled__2026-05-18T00:05:00+00:00 [scheduled]>] for executor: SequentialExecutor(parallelism=32)
+[2026-05-19T02:05:01.519+0200] {scheduler_job_runner.py:692} INFO - Sending TaskInstanceKey(dag_id='daily_scan', task_id='task_run_etl', run_id='scheduled__2026-05-18T00:05:00+00:00', try_number=1, map_index=-1) to SequentialExecutor with priority 1 and queue default
+[2026-05-19T02:05:01.519+0200] {base_executor.py:169} INFO - Adding to queue: ['airflow', 'tasks', 'run', 'daily_scan', 'task_run_etl', 'scheduled__2026-05-18T00:05:00+00:00', '--local', '--subdir', 'DAGS_FOLDER/dag_task_etl.py']
+[2026-05-19T02:05:01.522+0200] {sequential_executor.py:84} INFO - Executing command: ['airflow', 'tasks', 'run', 'daily_scan', 'task_run_etl', 'scheduled__2026-05-18T00:05:00+00:00', '--local', '--subdir', 'DAGS_FOLDER/dag_task_etl.py']
+[2026-05-19T02:05:02.760+0200] {dagbag.py:588} INFO - Filling up the DagBag from /home/jean/Documents/Dev/blent/BlentDataProject/airflow_home/dags/dag_task_etl.py
+[2026-05-19T02:05:02.887+0200] {task_command.py:467} INFO - Running <TaskInstance: daily_scan.task_run_etl scheduled__2026-05-18T00:05:00+00:00 [queued]> on host LAPTOP-HP
+[2026-05-19T02:05:10.886+0200] {scheduler_job_runner.py:776} INFO - Received executor event with state success for task instance TaskInstanceKey(dag_id='daily_scan', task_id='task_run_etl', run_id='scheduled__2026-05-18T00:05:00+00:00', try_number=1, map_index=-1)
+[2026-05-19T02:05:10.892+0200] {scheduler_job_runner.py:813} INFO - TaskInstance Finished: dag_id=daily_scan, task_id=task_run_etl, run_id=scheduled__2026-05-18T00:05:00+00:00, map_index=-1, run_start_date=2026-05-19 00:05:02.931778+00:00, run_end_date=2026-05-19 00:05:10.490029+00:00, run_duration=7.558251, state=success, executor=SequentialExecutor(parallelism=32), executor_state=success, try_number=1, max_tries=0, job_id=31, pool=default_pool, queue=default, priority_weight=1, operator=BashOperator, queued_dttm=2026-05-19 00:05:01.517444+00:00, queued_by_job_id=29, pid=18043
+[2026-05-19T02:05:10.949+0200] {dagrun.py:854} INFO - Marking run <DagRun daily_scan @ 2026-05-18 00:05:00+00:00: scheduled__2026-05-18T00:05:00+00:00, state:running, queued_at: 2026-05-19 00:05:01.461381+00:00. externally triggered: False> successful
+[2026-05-19T02:05:10.950+0200] {dagrun.py:905} INFO - DagRun Finished: dag_id=daily_scan, execution_date=2026-05-18 00:05:00+00:00, run_id=scheduled__2026-05-18T00:05:00+00:00, run_start_date=2026-05-19 00:05:01.494308+00:00, run_end_date=2026-05-19 00:05:10.950350+00:00, run_duration=9.456042, state=success, external_trigger=False, run_type=scheduled, data_interval_start=2026-05-18 00:05:00+00:00, data_interval_end=2026-05-19 00:05:00+00:00, dag_hash=007772062027d8ad1274c579a1b80747
+[2026-05-19T02:05:10.955+0200] {dag.py:4180} INFO - Setting next_dagrun for daily_scan to 2026-05-19 00:05:00+00:00, run_after=2026-05-20 00:05:00+00:00
+[2026-05-19T02:08:12.577+0200] {scheduler_job_runner.py:1949} INFO - Adopting or resetting orphaned tasks for active dag runs

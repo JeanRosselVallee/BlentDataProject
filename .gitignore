@@ -230,4 +230,6 @@ airflow_home/airflow.db
 airflow_home/logs/
 airflow_home/airflow-scheduler.out 
 airflow_home/airflow.db
+airflow_home/airflow*.*
+
 

@@ -1,6 +1,0 @@
-[2026-05-19 01:13:11 +0200] [14320] [INFO] Starting gunicorn 26.0.0
-[2026-05-19 01:13:11 +0200] [14320] [INFO] Listening at: http://[::]:8793 (14320)
-[2026-05-19 01:13:11 +0200] [14320] [INFO] Using worker: sync
-[2026-05-19 01:13:11 +0200] [14321] [INFO] Booting worker with pid: 14321
-[2026-05-19 01:13:11 +0200] [14323] [INFO] Booting worker with pid: 14323
-[2026-05-19 01:13:12 +0200] [14320] [INFO] Control socket listening at /run/user/1000/gunicorn.ctl

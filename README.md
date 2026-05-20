@@ -2,14 +2,14 @@
 
 Daily ETL that reads reviews from MongoDB (Atlas), computes the **Top 15** best-rated games using only the **last 6 months** of reviews, and upserts the daily snapshot into a PostgreSQL Data Warehouse (Render).
 
-<img src="./image_infographics.png" alt="Schéma d'architecture" width="80%">
+<img src="./doc/image_infographics.png" alt="Schéma d'architecture" width="80%">
 
 
 ### Technical & Operational Documentation
 
-Cf. [documentation_technique](documentation_technique.md). It defines the architecture, configuration, and operation of the automated ETL pipeline. It details the technical specifications, data flows, and operational guides for the project.
+Cf. [documentation_technique](./doc/doc_en.md). It defines the architecture, configuration, and operation of the automated ETL pipeline. It details the technical specifications, data flows, and operational guides for the project.
 
-<img src="./schema_architecture.png" alt="Schéma d'architecture" width="50%">
+<img src="./doc/schema_architecture.png" alt="Schéma d'architecture" width="50%">
 
 
 ### Project Directory Tree

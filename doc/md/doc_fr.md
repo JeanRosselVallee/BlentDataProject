@@ -1,10 +1,14 @@
-<h1>Pipeline ETL Jeux-Vidéo</h1>
+<h1>Pipeline ETL Jeux-Vidéo
+    <a href=https://github.com/JeanRosselVallee/BlentDataProject/blob/main/README.md>
+        (dépôt GitHub)
+    </a>
+</h1>
 <h2>Documentation Technique & Opérationnelle</h2>
-
 <style>
     pre, code { font-size: 12px !important; } /* for code blocks font=12px */
     td {padding: 3px !important;} /* for tables, horizontal padding = 3px */
 </style>
+
 
 **Table de matières**
 
@@ -38,8 +42,8 @@
   - [Flux logique](#flux-logique)
   - [Algorithme d'agrégation](#algorithme-dagrégation)
 - [6 Monitoring et Exploitation](#6-monitoring-et-exploitation)
-    - [Orchestrateur __Airflow__ :](#orchestrateur-airflow-)
-    - [Vérification DWH :](#vérification-dwh-)
+  - [Orchestrateur Airflow](#orchestrateur-airflow)
+  - [Résultats DWH](#résultats-dwh)
 
 <div style="page-break-after: always;"></div>
 
@@ -223,7 +227,6 @@ La table cible `daily_snapshot` possède le schéma suivant pour garantir l'hist
 | `average_rating` | NUMERIC(3,2) | Note moyenne (1.00 à 5.00). |
 | `oldest_rating` | NUMERIC(3,2) | Note du premier avis de la période. |
 | `newest_rating` | NUMERIC(3,2) | Note du dernier avis de la période. |
-
 
 <div style="page-break-after: always;"></div>
 
@@ -411,7 +414,7 @@ pipeline = [
 ## 6 Monitoring et Exploitation
 
 
-#### Orchestrateur __Airflow__ :
+### Orchestrateur Airflow
 *   **Modes d'exécution :**
     *   **Lancement des serveurs** : `./airflow_run_etl.sh` (sans argument).
     *   **Test sur une date unique** : Exécuter `./airflow_run_etl.sh YYYY-MM-DD` (ex: `./airflow_run_etl.sh 2024-05-20`). Cela lance un `airflow tasks test` pour vérifier la logique sans modifier l'état du scheduler.
@@ -422,12 +425,84 @@ pipeline = [
     *   **Interface Web :** Accéder à `http://localhost:8080`. 
         *   **Tableau de bord :** Activer le DAG `daily_scan`.
 
-#### Vérification DWH :
-Requête pour vérifier le Top 15 du dernier run ou d'une autre date.
+### Résultats DWH
+
+*   Requête pour vérifier le Top 15 du dernier run ou d'une autre date.
 ```sql
 SELECT * FROM public.daily_snapshot 
 WHERE snapshot_date = <TARGET_DATE YYYY-MM-DD>;
 ```
 
+*   Echantillon des résultats obtenus dans la table `daily_snapshot` (cf. [fichier de résultats CSV](../../queries/dwh/results.csv)):
+
+
+<div style="font-size: 11px; line-height: 1.2;" align="center">
+
+  
+| product_id | nb_reviews | average_rating | oldest_rating | newest_rating | snapshot_date |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| B01AVLWBY0 | 13 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B01D014G9Q | 13 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B01GWGXHKK | 14 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B00000F1GM | 14 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B000ERVMI8 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B00003OTI3 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B01GW8ZA9Y | 15 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B00U6DTGP6 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B019J6RYCW | 17 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B00BAWXD88 | 18 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B00002STXQ | 18 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B014P7QI6I | 19 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B00KAED7OC | 19 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B00O9GW8VK | 25 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B01BHMS88A | 30 | 5.00 | 5.00 | 5.00 | 2026-05-19 |
+| B01D014G9Q | 13 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B01AVLWBY0 | 13 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B00000F1GM | 14 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B01GWGXHKK | 14 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B00U6DTGP6 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B000ERVMI8 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B01GW8ZA9Y | 15 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B00003OTI3 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B019J6RYCW | 17 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B00BAWXD88 | 18 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B00002STXQ | 18 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B014P7QI6I | 19 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B00KAED7OC | 19 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B00O9GW8VK | 25 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B01BHMS88A | 32 | 5.00 | 5.00 | 5.00 | 2026-05-18 |
+| B01AVLWBY0 | 13 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B01D014G9Q | 13 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B01GWGXHKK | 14 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B00000F1GM | 14 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B01GW8ZA9Y | 15 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B000ERVMI8 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B00U6DTGP6 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B00003OTI3 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B019J6RYCW | 17 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B00002STXQ | 18 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B00BAWXD88 | 18 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B00KAED7OC | 19 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B014P7QI6I | 19 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B00O9GW8VK | 26 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B01BHMS88A | 32 | 5.00 | 5.00 | 5.00 | 2026-05-17 |
+| B01D014G9Q | 13 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B01AVLWBY0 | 13 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B00000F1GM | 14 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B01GWGXHKK | 14 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B000ERVMI8 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B00003OTI3 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B00U6DTGP6 | 15 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B01GW8ZA9Y | 15 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B019J6RYCW | 17 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B00BAWXD88 | 18 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B00002STXQ | 18 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B00KAED7OC | 19 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B014P7QI6I | 19 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B00O9GW8VK | 26 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+| B01BHMS88A | 32 | 5.00 | 5.00 | 5.00 | 2026-05-16 |
+
+</div>
+
 ---
-*J. Vallée - 2026-05-20*
+<h5 align="center">Jean Vallée - 2026-05-20</h5>

@@ -2,6 +2,9 @@
 -- ^E + Ê : Run selected query
 
 
+select * from public.daily_snapshot order by snapshot_date desc limit 100;
+
+
 SELECT product_id,
        nb_reviews,
        average_rating,

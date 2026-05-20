@@ -1,9 +1,14 @@
 <h1>Video Games ETL Pipeline</h1>
 <h2>Technical & Operational Documentation</h2>
 
-<style>  /* Automatically shrinks all code blocks across the whole PDF */
-  pre, code { font-size: 12px !important; }
+
+<p>
+<style>  
+    pre, code { font-size: 12px !important; }  /* for code blocks font=12px */
+    td {padding: 3px !important;}  /* for tables, horizontal padding = 3px */
 </style>
+</p>
+
 
 **Table of Contents**
 
@@ -217,10 +222,12 @@ The target relational table `daily_snapshot` enforces the following schema to en
 
 <div style="page-break-after: always;"></div>
 
+
 ### 3.5 Traceability Matrix
 
+
 <div style="font-size: 11px; line-height: 1.2;">
-<style> td {padding: 3px !important;} </style>  /* for all tables, horizontal padding = 3px */
+
 
 | Requirement Segment | Specific Requirement | Script (directory) | Implementation Status & Comments |
 | :--- | :--- | :--- | :--- |

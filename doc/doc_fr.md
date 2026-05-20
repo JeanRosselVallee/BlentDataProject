@@ -1,9 +1,14 @@
 <h1>Pipeline ETL Jeux-Vidéo</h1>
 <h2>Documentation Technique & Opérationnelle</h2>
 
-<style>  /* Automatically shrinks all code blocks across the whole PDF */
-  pre, code { font-size: 12px !important; }
+
+<p>
+<style>  
+    pre, code { font-size: 12px !important; }  /* for code blocks font=12px */
+    td {padding: 3px !important;}  /* for tables, horizontal padding = 3px */
 </style>
+</p>
+
 
 **Table de matières**
 
@@ -217,10 +222,12 @@ La table cible `daily_snapshot` possède le schéma suivant pour garantir l'hist
 
 <div style="page-break-after: always;"></div>
 
+
 ### 3.5 Matrice de traçabilité
 
+
 <div style="font-size: 11px; line-height: 1.2;">
-<style> td {padding: 3px !important;} </style>  /* for all tables, horizontal padding = 3px */
+
 
 | Segment d'Exigence | Exigence Spécifique | Script (dossier) | Statut d'Implémentation & Commentaires |
 | :--- | :--- | :--- | :--- |

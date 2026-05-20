@@ -7,7 +7,7 @@ Daily ETL that reads reviews from MongoDB (Atlas), computes the **Top 15** best-
 
 ### Technical & Operational Documentation
 
-Cf. [documentation_technique](./doc/doc_en.md). It defines the architecture, configuration, and operation of the automated ETL pipeline. It details the technical specifications, data flows, and operational guides for the project.
+Cf. [Technical & Operational Documentation](./doc/doc_en.md). It defines the architecture, configuration, and operation of the automated ETL pipeline. It details the technical specifications, data flows, and operational guides for the project.
 
 <img src="./doc/schema_architecture.png" alt="Schéma d'architecture" width="50%">
 

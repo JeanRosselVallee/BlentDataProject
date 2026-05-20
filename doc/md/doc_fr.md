@@ -116,8 +116,7 @@ Les données brutes proviennent d'un flux JSON compressé intégré dans MongoDB
 *   **IDE** : Visual Studio Code
     *   **Extensions** : 
         *   MongoDB for VS Code
-        *   SQLTools 
-        *   SQLTools PostgreSQL/Cockroach Driver 
+        *   SQLTools & SQLTools PostgreSQL/Cockroach Driver 
         *   SQLite Viewer
 *   **Système d'exploitation** : Ubuntu-Linux. Airflow Scheduler requires a Unix-like OS (os.fork).
 

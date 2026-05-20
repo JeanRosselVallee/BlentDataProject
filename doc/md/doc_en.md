@@ -117,8 +117,7 @@ The raw source data originates from a compressed JSON stream ingested into Mongo
 * **IDE**: Visual Studio Code
     * **Extensions**: 
         * MongoDB for VS Code
-        * SQLTools 
-        * SQLTools PostgreSQL/Cockroach Driver 
+        * SQLTools & SQLTools PostgreSQL/Cockroach Driver 
         * SQLite Viewer
 * **Operating System**: Ubuntu Linux. (The Airflow Scheduler strictly requires a Unix-like OS environment to support task process handling via `os.fork`).
 

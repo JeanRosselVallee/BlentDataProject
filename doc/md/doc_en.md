@@ -138,8 +138,10 @@ BlentDataProject/
 │       ├── doc_fr.md         # Documentation Technique (Français)
 │       └── spec_fr.md        # Initial specifications and requirements
 ├── queries/                  # Maintenance scripts (MongoDB/SQL migrations)
-│   └── datalake/
-│       └── change_dates.mongodb.js # Date shifting script for MongoDB
+│   ├── datalake/
+│   │   └── change_dates.mongodb.js # Date shifting script for MongoDB
+│   └── dwh/
+│       └── results.csv       # Results from table `daily_snapshot` in DWH DB
 ├── scripts/
 │   └── run_etl.py            # Python script (Extraction, Calculations, Loading)
 ├── src/                      # Core logic

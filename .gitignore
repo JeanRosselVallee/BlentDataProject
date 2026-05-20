@@ -226,5 +226,6 @@ airflow_home/airflow*.*
 airflow_home/webserver_config.py
 !airflow_home/airflow.cfg  # ... but airflow.cfg
 
-
+airflow_home/logs/
+airflow_home/webserver_config.py
 

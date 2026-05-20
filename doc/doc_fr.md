@@ -1,13 +1,59 @@
-# Documentation Technique & Opérationnelle : Pipeline ETL Jeux-Vidéo
+<h1>Pipeline ETL Jeux-Vidéo</h1>
+<h2>Documentation Technique & Opérationnelle</h2>
 
-<img src="./image_infographics.png" alt="Schéma d'architecture" width="80%">
+<style>  /* Automatically shrinks all code blocks across the whole PDF */
+  pre, code { font-size: 12px !important; }
+</style>
+
+**Table de matières**
+
+- [1. Présentation générale](#1-présentation-générale)
+  - [Objectifs Business](#objectifs-business)
+- [2. Cahier des charges](#2-cahier-des-charges)
+  - [2.1 Besoins Métiers \& Règles de Gestion](#21-besoins-métiers--règles-de-gestion)
+  - [2.2 Spécifications Techniques des Données](#22-spécifications-techniques-des-données)
+- [3. Solution Technique \& Architecture](#3-solution-technique--architecture)
+  - [3.1 Outils](#31-outils)
+  - [3.2 Arborescence du Projet](#32-arborescence-du-projet)
+  - [3.3 Diagramme d'Architecture](#33-diagramme-darchitecture)
+    - [1. Ingestion et Préparation (Profil : Développeur)](#1-ingestion-et-préparation-profil--développeur)
+    - [2. Exécution Manuelle du Pipeline (Profil : Développeur)](#2-exécution-manuelle-du-pipeline-profil--développeur)
+    - [3. Orchestration et Déploiement (Profil : Administrateur)](#3-orchestration-et-déploiement-profil--administrateur)
+    - [4. Exploitation de la Donnée (Profil : Analystes \& Décideurs)](#4-exploitation-de-la-donnée-profil--analystes--décideurs)
+  - [3.4 Schéma de données](#34-schéma-de-données)
+    - [Datalake (MongoDB No-SQL)](#datalake-mongodb-no-sql)
+    - [Datawarehouse (SQL)](#datawarehouse-sql)
+  - [3.5 Matrice de traçabilité](#35-matrice-de-traçabilité)
+  - [3.6 Choix d'amélioration](#36-choix-damélioration)
+- [4 Guide de Déploiement (Administrateur)](#4-guide-de-déploiement-administrateur)
+  - [Étape 1 : Préparation des Infrastructures Cloud](#étape-1--préparation-des-infrastructures-cloud)
+  - [Étape 2 : Clonage et Configuration logicielle](#étape-2--clonage-et-configuration-logicielle)
+  - [Étape 3 : Mise en service d'Airflow et Initialisation](#étape-3--mise-en-service-dairflow-et-initialisation)
+- [5 Guide du Développeur](#5-guide-du-développeur)
+  - [Lancement du script ETL en direct](#lancement-du-script-etl-en-direct)
+  - [Initialisation automatique des données](#initialisation-automatique-des-données)
+  - [Maintenance des données (Postdatage)](#maintenance-des-données-postdatage)
+  - [Flux logique](#flux-logique)
+  - [Algorithme d'agrégation](#algorithme-dagrégation)
+- [6 Monitoring et Exploitation](#6-monitoring-et-exploitation)
+    - [Orchestrateur __Airflow__ :](#orchestrateur-airflow-)
+    - [Vérification DWH :](#vérification-dwh-)
+
+<div style="page-break-after: always;"></div>
 
 ## 1. Présentation générale
 Ce document définit l'architecture, la configuration et l'exploitation du pipeline ETL automatisé. L'objectif est d'extraire quotidiennement les avis bruts stockés sur une base NoSQL, d'identifier les tendances de la communauté, et d'alimenter un Data Warehouse (DWH) relationnel.
 
+<img src="./image_infographics.png" alt="Schéma d'architecture" width="100%">
+
+
 ### Objectifs Business
 *   **Optimisation du catalogue** : Mettre en avant sur la page d'accueil et dans les campagnes de communication (newsletters, réseaux sociaux) les jeux les mieux notés.
 *   **Fraîcheur des données** : Historiser jour par jour les 15 jeux les mieux notés en se basant exclusivement sur les avis des 6 derniers mois.
+
+
+<div style="page-break-after: always;"></div>
+
 
 ## 2. Cahier des charges
 
@@ -15,6 +61,7 @@ Ce document définit l'architecture, la configuration et l'exploitation du pipel
 *   **Fenêtre Glissante** : Exclusion stricte de tout avis ayant plus de 6 mois d'antériorité par rapport à la date d'exécution.
 *   **Top 15** : Calcul quotidien basé sur la note moyenne et le volume d'avis pour extraire exactement les 15 meilleures références.
 *   **Idempotence & Unicité** : Tolérance zéro pour les doublons. Si le pipeline s'exécute plusieurs fois pour la même journée, les anciennes données de cette journée doivent être écrasées et remplacées (**Stratégie Upsert / Replace**).
+
 
 ### 2.2 Spécifications Techniques des Données
 Les données brutes proviennent d'un flux JSON compressé intégré dans MongoDB Atlas.
@@ -48,6 +95,10 @@ Les données brutes proviennent d'un flux JSON compressé intégré dans MongoDB
     * Note la plus ancienne retenue sur la fenêtre
     * Note la plus récente enregistrée
     * Date d'exécution du calcul
+
+
+<div style="page-break-after: always;"></div>
+
 
 ## 3. Solution Technique & Architecture
 
@@ -88,6 +139,10 @@ BlentDataProject/
 └── requirements_etl.txt      # Dépendances du script ETL
 ```
 
+
+<div style="page-break-after: always;"></div>
+
+
 ### 3.3 Diagramme d'Architecture
 Cette section détaille les flux de données et les interactions selon les différents profils et besoins métiers.
 
@@ -96,10 +151,21 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *    **Processus** : Chargement du fichier JSON source via la fonction `seed_datalake` suivie d'un postdatage des documents pour simuler des avis récents (fenêtre de 6 mois).
 *    *Cf. Schéma 1 : Flux d'ingestion et script de postdatage*
 
+
+<img src="./architecture_schema_1.png" alt="Schéma d'architecture" width="100%">
+
+
 #### 2. Exécution Manuelle du Pipeline (Profil : Développeur)
 *   **Objectif** : Validation technique unitaire ou test de performance.  
 *   **Processus** : Lancement direct du script `run_etl.py` via CLI avec les arguments `--scan_date` et `--platform`.
 *   *Cf. Schéma 2 : Pipeline d'extraction, transformation et chargement direct*
+
+
+<img src="./architecture_schema_2.png" alt="Schéma d'architecture" width="100%">
+
+
+<div style="page-break-after: always;"></div>
+
 
 #### 3. Orchestration et Déploiement (Profil : Administrateur)
 *   **Objectif** : Gestion de l'infrastructure et automatisation de la production.  
@@ -107,17 +173,25 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *   **Modes** : Daily Schedule (Automatique), Test (Unitaire), Backfill (Historique).
 *   *Cf. Schéma 3 : Architecture d'orchestration Airflow et modes d'exécution*
 
+
+<img src="./architecture_schema_3.png" alt="Schéma d'architecture" width="100%">
+
+
 #### 4. Exploitation de la Donnée (Profil : Analystes & Décideurs)
 *   **Objectif** : Consultation des tendances et aide à la décision.  
 *   **Flux** : DWH PostgreSQL (Render) ➔ Requêtes SQL ➔ Rapports / Newsletters / Interface Web.
 *   *Cf. Schéma 4 : Flux de consommation finale des données SQL*
 
-<img src="./schema_architecture.png" alt="Schéma d'architecture" width="50%">
+<img src="./architecture_schema_4.png" alt="Schéma d'architecture" width="100%">
+
+
+<div style="page-break-after: always;"></div>
 
 
 ### 3.4 Schéma de données
 
-**Datalake (MongoDB No-SQL) :**
+#### Datalake (MongoDB No-SQL)
+
 La collection contient les informations requises par la cible DWH dans ces colonnes :
 | Colonne | Type | Description |
 | :--- | :--- | :--- |
@@ -128,7 +202,8 @@ La collection contient les informations requises par la cible DWH dans ces colon
 | `unixReviewTime` | int | Timestamp Unix. |
 | `reviewTime` | str | Date formatée. |
 
-**DWH :**
+#### Datawarehouse (SQL)
+
 La table cible `daily_snapshot` possède le schéma suivant pour garantir l'historisation et l'idempotence :
 | Colonne | Type | Description |
 | :--- | :--- | :--- |
@@ -140,18 +215,28 @@ La table cible `daily_snapshot` possède le schéma suivant pour garantir l'hist
 | `newest_rating` | NUMERIC(3,2) | Note du dernier avis de la période. |
 
 
+<div style="page-break-after: always;"></div>
+
 ### 3.5 Matrice de traçabilité
-| Segment d'Exigence | Exigence Spécifique | Script / Localisation (sous RootDir) | Statut d'Implémentation & Commentaires |
+
+<div style="font-size: 11px; line-height: 1.2;">
+<style> td {padding: 3px !important;} </style>  /* for all tables, horizontal padding = 3px */
+
+| Segment d'Exigence | Exigence Spécifique | Script (dossier) | Statut d'Implémentation & Commentaires |
 | :--- | :--- | :--- | :--- |
-| **Données Source** | Données brutes dans MongoDB | `src/lib_etl.py` | Implémenté. `connect_mongo` et `extract_and_transform` utilisent `pymongo` pour interroger la collection source. |
-| **Data Warehouse** | Compatible SQL (PostgreSQL) | `src/lib_etl.py` | Implémenté. Utilise `sqlalchemy` et `psycopg2` (via DSN) pour se connecter à PostgreSQL (configuré pour Render). |
-| **Filtrage des Données** | Seuls les avis des 6 derniers mois | `src/lib_etl.py` | Implémenté. `get_timeframe_start` calcule le delta de 6 mois, et `extract_and_transform` utilise `$match` avec `unixReviewTime`. |
-| **Agrégation** | Top 15 des jeux les mieux notés | `src/lib_etl.py` | Implémenté. Le pipeline utilise `$limit: top_n` (par défaut 15). La logique trie par `average_rating` et `nb_reviews`. |
-| **Schéma des Données** | ID Produit, Note Moyenne, Compte, Note la plus Ancienne/Récente | `src/lib_etl.py` | Implémenté. `init_dwh` crée la table `reviews` avec les colonnes : `product_id`, `nb_reviews`, `average_rating`, `oldest_rating`, `newest_rating`. |
-| **Idempotence** | Gérer les doublons / Remplacer les valeurs existantes | `src/lib_etl.py` | Implémenté. `upsert_dwh` effectue un `DELETE` pour la `snapshot_date` spécifique avant d'effectuer un `append`. |
-| **Logique du Pipeline** | Script Python pour l'ETL | `scripts/run_etl.py` | Implémenté. Le script point d'entrée orchestre les phases d'Extraction, Transformation et Chargement. |
-| **Automatisation** | Outil d'Orchestration / Planification | `airflow_run_etl.sh` | Implémenté. Le script Shell gère la configuration de l'environnement Airflow, la gestion des serveurs et le backfill. |
-| **Intégrité des Données** | Utiliser uniquement les utilisateurs vérifiés | `src/lib_etl.py` | Implémenté. Le pipeline d'agrégation MongoDB filtre sur `verified: True`. |
+| **Données Source** | Données brutes dans MongoDB | `lib_etl.py (src)` | Implémenté. `connect_mongo` et `extract_and_transform` utilisent `pymongo` pour interroger la collection source. |
+| **Data Warehouse** | Compatible SQL (PostgreSQL) | `lib_etl.py (src)` | Implémenté. Utilise `sqlalchemy` et `psycopg2` (via DSN) pour se connecter à PostgreSQL (configuré pour Render). |
+| **Filtrage des Données** | Seuls les avis des 6 derniers mois | `lib_etl.py (src)` | Implémenté. `get_timeframe_start` calcule le delta de 6 mois, et `extract_and_transform` utilise `$match` avec `unixReviewTime`. |
+| **Agrégation** | Top 15 des jeux les mieux notés | `lib_etl.py (src)` | Implémenté. Le pipeline utilise `$limit: top_n` (par défaut 15). La logique trie par `average_rating` et `nb_reviews`. |
+| **Schéma des Données** | ID Produit, Note Moyenne, Compte, Note la plus Ancienne/Récente | `lib_etl.py (src)` | Implémenté. `init_dwh` crée la table `reviews` avec les colonnes : `product_id`, `nb_reviews`, `average_rating`, `oldest_rating`, `newest_rating`. |
+| **Idempotence** | Gérer les doublons / Remplacer les valeurs existantes | `lib_etl.py (src)` | Implémenté. `upsert_dwh` effectue un `DELETE` pour la `snapshot_date` spécifique avant d'effectuer un `append`. |
+| **Logique du Pipeline** | Script Python pour l'ETL | `run_etl.py (src)` | Implémenté. Le script point d'entrée orchestre les phases d'Extraction, Transformation et Chargement. |
+| **Automatisation** | Outil d'Orchestration / Planification | `airflow_run _etl.sh` | Implémenté. Le script Shell gère la configuration de l'environnement Airflow, la gestion des serveurs et le backfill. |
+| **Intégrité des Données** | Utiliser uniquement les utilisateurs vérifiés | `lib_etl.py (src)` | Implémenté. Le pipeline d'agrégation MongoDB filtre sur `verified: True`. |
+
+
+</div>
+
 
 **Bilan :**
 *   **Gestion des Dates** : La transition du jeu de données hérité (2017) vers un contexte "actuel" a été correctement gérée en utilisant le script `queries/datalake/change_dates.mongodb.js` afin de garantir que la logique de fenêtre glissante de 6 mois retourne effectivement des données pendant le développement.
@@ -163,11 +248,13 @@ La table cible `daily_snapshot` possède le schéma suivant pour garantir l'hist
 2.  **Robustesse** : Utilisation de SQL Alchemy avec gestion de transactions (`db_dwh.begin()`) pour garantir l'intégrité des chargements.
 3.  **Sécurité** : Configuration par variables d'environnement (dotenv).
 
-## 4. Guides
 
-### 4.1 Guide de Déploiement (Administrateur)
+<div style="page-break-after: always;"></div>
 
-#### Étape 1 : Préparation des Infrastructures Cloud
+
+## 4 Guide de Déploiement (Administrateur)
+
+### Étape 1 : Préparation des Infrastructures Cloud
 1.  **MongoDB Atlas (Source) :**
     *   Créer un Cluster (Shared/Gratuit).
     *   Dans **Network Access**, ajouter l'IP du serveur (ou `0.0.0.0/0` pour le test).
@@ -178,7 +265,7 @@ La table cible `daily_snapshot` possède le schéma suivant pour garantir l'hist
     *   Créer un utilisateur
     *   Noter l'**External Connection String**.
 
-#### Étape 2 : Clonage et Configuration logicielle
+### Étape 2 : Clonage et Configuration logicielle
 ```bash
 # 1. Cloner le projet
 git clone https://github.com/votre-compte/BlentDataProject.git
@@ -197,7 +284,7 @@ source .venv_airflow/bin/activate && pip install -r requirements_airflow.txt && 
 source .venv_etl/bin/activate && pip install -r requirements_etl.txt && deactivate
 ```
 
-#### Étape 3 : Mise en service d'Airflow et Initialisation
+### Étape 3 : Mise en service d'Airflow et Initialisation
 Exécuter le script de pilotage pour démarrer l'écosystème :
 ```bash
 chmod +x airflow_run_etl.sh
@@ -208,9 +295,13 @@ Ce script automatise :
 2.  La création de l'utilisateur `admin`.
 3.  Le lancement du **Scheduler** et du **Webserver** (Port 8080) en mode démon.
 
-### 4.2 Guide du Développeur (Usage manuel)
 
-#### Lancement du script ETL en direct
+<div style="page-break-after: always;"></div>
+
+
+## 5 Guide du Développeur
+
+### Lancement du script ETL en direct
 Le développeur peut tester le pipeline sans passer par l'interface Airflow :
 ```bash
 source .venv_etl/bin/activate
@@ -222,21 +313,19 @@ python scripts/run_etl.py
 python scripts/run_etl.py --scan_date 2024-05-20 --platform Terminal
 ```
 
-#### Initialisation automatique des données
+### Initialisation automatique des données
 Le script `run_etl.py` gère l'initialisation au premier lancement :
 *   **MongoDB (Seeding) :** Si la collection est vide, la fonction `seed_datalake` injecte automatiquement les données depuis le fichier source JSON.
 *   **PostgreSQL (DDL) :** La fonction `init_dwh` crée automatiquement la table `daily_snapshot` et ses index si elle n'existe pas.
 
-#### Maintenance des données (Postdatage)
+### Maintenance des données (Postdatage)
 Si les données sources sont trop anciennes pour le calcul des 6 mois glissants :
 *   Utiliser l'extension MongoDB de VS Code
 *   Ouvrir le fichier `queries/datalake/change_dates.mongodb.js`
 *   Cliquer sur l'icône `Play`
 
 
-### 4.3 Pour le développeur
-
-**Diagramme de flux logique** :
+### Flux logique
 1.  **Extract** : Requête MongoDB avec filtre sur `unixReviewTime` >= (J - 6 mois) et `verified: true`.
 2.  **Transform** : 
     *   Tri chronologique.
@@ -249,7 +338,11 @@ Si les données sources sont trop anciennes pour le calcul des 6 mois glissants 
     *   Suppression des données existantes pour la `snapshot_date`.
     *   Insertion du nouveau DataFrame.
 
-**Algorithme d'agrégation** :
+
+<div style="page-break-after: always;"></div>
+
+
+### Algorithme d'agrégation
 Le coeur du calcul réside dans le pipeline d'agrégation MongoDB au sein de `extract_and_transform`. Il combine filtrage, tri et calcul statistique en une seule opération côté serveur.
 
 ```python
@@ -269,7 +362,10 @@ pipeline = [
 ]
 ```
 
-### 4.4 Monitoring et Exploitation
+<div style="page-break-after: always;"></div>
+
+
+## 6 Monitoring et Exploitation
 
 
 #### Orchestrateur __Airflow__ :
@@ -281,7 +377,7 @@ pipeline = [
 
 *   **Monitoring :**
     *   **Interface Web :** Accéder à `http://localhost:8080`. 
-        *   **Tableau de bord :**Activer le DAG `daily_scan`.
+        *   **Tableau de bord :** Activer le DAG `daily_scan`.
 
 #### Vérification DWH :
 Requête pour vérifier le Top 15 du dernier run ou d'une autre date.
@@ -291,4 +387,4 @@ WHERE snapshot_date = <TARGET_DATE YYYY-MM-DD>;
 ```
 
 ---
-*Document généré le : 2026-05-22*
+*J. Vallée - 2026-05-20*

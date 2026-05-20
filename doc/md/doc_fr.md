@@ -11,7 +11,7 @@
 - [1. Présentation générale](#1-présentation-générale)
   - [Objectifs Business](#objectifs-business)
 - [2. Cahier des charges](#2-cahier-des-charges)
-  - [2.1 Besoins Métiers \& Règles de Gestion](#21-besoins-métiers--règles-de-gestion)
+  - [2.1 Besoins Métier \& Règles de Gestion](#21-besoins-métier--règles-de-gestion)
   - [2.2 Spécifications Techniques des Données](#22-spécifications-techniques-des-données)
 - [3. Solution Technique \& Architecture](#3-solution-technique--architecture)
   - [3.1 Outils](#31-outils)
@@ -24,8 +24,9 @@
   - [3.4 Schéma de données](#34-schéma-de-données)
     - [Datalake (MongoDB No-SQL)](#datalake-mongodb-no-sql)
     - [Datawarehouse (SQL)](#datawarehouse-sql)
-  - [3.5 Matrice de traçabilité](#35-matrice-de-traçabilité)
-  - [3.6 Choix d'amélioration](#36-choix-damélioration)
+  - [3.5 Référencement des Données](#35-référencement-des-données)
+  - [3.6 Matrice de traçabilité](#36-matrice-de-traçabilité)
+  - [3.7 Choix d'amélioration](#37-choix-damélioration)
 - [4 Guide de Déploiement (Administrateur)](#4-guide-de-déploiement-administrateur)
   - [Étape 1 : Préparation des Infrastructures Cloud](#étape-1--préparation-des-infrastructures-cloud)
   - [Étape 2 : Clonage et Configuration logicielle](#étape-2--clonage-et-configuration-logicielle)
@@ -45,7 +46,7 @@
 ## 1. Présentation générale
 Ce document définit l'architecture, la configuration et l'exploitation du pipeline ETL automatisé. L'objectif est d'extraire quotidiennement les avis bruts stockés sur une base NoSQL, d'identifier les tendances de la communauté, et d'alimenter un Data Warehouse (DWH) relationnel.
 
-<img src="./image_infographics.png" alt="Schéma d'architecture" width="100%">
+<img src="../img/infographics.png" alt="Infographics" width="100%">
 
 
 ### Objectifs Business
@@ -58,7 +59,7 @@ Ce document définit l'architecture, la configuration et l'exploitation du pipel
 
 ## 2. Cahier des charges
 
-### 2.1 Besoins Métiers & Règles de Gestion
+### 2.1 Besoins Métier & Règles de Gestion
 *   **Fenêtre Glissante** : Exclusion stricte de tout avis ayant plus de 6 mois d'antériorité par rapport à la date d'exécution.
 *   **Top 15** : Calcul quotidien basé sur la note moyenne et le volume d'avis pour extraire exactement les 15 meilleures références.
 *   **Idempotence & Unicité** : Tolérance zéro pour les doublons. Si le pipeline s'exécute plusieurs fois pour la même journée, les anciennes données de cette journée doivent être écrasées et remplacées (**Stratégie Upsert / Replace**).
@@ -122,20 +123,28 @@ Les données brutes proviennent d'un flux JSON compressé intégré dans MongoDB
 BlentDataProject/
 ├── .venv_airflow/            # Environnement virtuel dédié à Airflow
 ├── .venv_etl/                # Environnement virtuel dédié au script ETL
-├── airflow_home/             # Répertoire de travail Airflow (Logs, DB locale)
+├── airflow_home/             # Répertoire de travail d'Airflow (Logs, DB locale)
 │   ├── airflow.db            # Base de données SQLite de l'orchestrateur
 │   └── dags/                 # Dossier des DAGs Airflow
-│       └── dag_task_etl.py   # Définition du DAG Airflow 2.3 & Doc intégrée
+│       └── dag_task_etl.py   # Définition du DAG Airflow 2.3 & documentation intégrée
 ├── doc/                      # Spécifications techniques et fonctionnelles
-├── queries/                  # Scripts de maintenance (Migration MongoDB/SQL)
+│   └── md/
+│       ├── doc_en.md         # Documentation technique (Anglais)
+│       ├── doc_fr.md         # Documentation technique (Français)
+│       └── spec_fr.md        # Spécifications et exigences initiales
+├── queries/                  # Scripts de maintenance (migrations MongoDB/SQL)
+│   └── datalake/
+│       └── change_dates.mongodb.js # Script de décalage des dates pour MongoDB
 ├── scripts/
 │   └── run_etl.py            # Script Python (Extraction, Calculs, Chargement)
-├── src/                      # Coeur logique (lib_etl.py, config.py)
-├── .env.template             # Modèle des secrets (MongoDB, Postgres)
-├── .gitignore                # Exclusion des environnements, logs et .env
-├── airflow.env               # Variables de chemins (PROJECT_ROOT, AIRFLOW_HOME)
-├── airflow_run_etl.sh        # Script de pilotage (Serveurs & Modes d'exécution)
-├── README.md                 # Vue d'ensemble et guide rapide
+├── src/                      # Logique centrale (Code source)
+│   ├── config.py             # Configuration et chargement de l'environnement
+│   └── lib_etl.py            # Bibliothèque ETL et fonctions d'aide (helpers)
+├── .env.template             # Modèle pour les secrets (MongoDB, Postgres)
+├── .gitignore                # Exclusions pour les environnements virtuels, les logs et le .env
+├── airflow.env.template      # Variables d'environnement des chemins (PROJECT_ROOT, AIRFLOW_HOME)
+├── airflow_run_etl.sh        # Script de contrôle (Serveurs & modes d'exécution)
+├── README.md                 # Vue d'ensemble et guide de démarrage rapide
 ├── requirements_airflow.txt  # Dépendances de l'orchestrateur
 └── requirements_etl.txt      # Dépendances du script ETL
 ```
@@ -153,7 +162,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *    *Cf. Schéma 1 : Flux d'ingestion et script de postdatage*
 
 
-<img src="./schema_1.png" alt="Schéma d'architecture" width="100%">
+<img src="../img/schema_1.png" alt="Schéma d'architecture 1" width="100%">
 
 
 #### 2. Exécution Manuelle du Pipeline (Profil : Développeur)
@@ -162,7 +171,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *   *Cf. Schéma 2 : Pipeline d'extraction, transformation et chargement direct*
 
 
-<img src="./schema_2.png" alt="Schéma d'architecture" width="100%">
+<img src="../img/schema_2.png" alt="Schéma d'architecture 2" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -175,7 +184,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *   *Cf. Schéma 3 : Architecture d'orchestration Airflow et modes d'exécution*
 
 
-<img src="./schema_3.png" alt="Schéma d'architecture" width="100%">
+<img src="../img/schema_3.png" alt="Schéma d'architecture 3" width="100%">
 
 
 #### 4. Exploitation de la Donnée (Profil : Analystes & Décideurs)
@@ -183,7 +192,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *   **Flux** : DWH PostgreSQL (Render) ➔ Requêtes SQL ➔ Rapports / Newsletters / Interface Web.
 *   *Cf. Schéma 4 : Flux de consommation finale des données SQL*
 
-<img src="./schema_4.png" alt="Schéma d'architecture" width="100%">
+<img src="../img/schema_4.png" alt="Schéma d'architecture 4" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -219,7 +228,39 @@ La table cible `daily_snapshot` possède le schéma suivant pour garantir l'hist
 <div style="page-break-after: always;"></div>
 
 
-### 3.5 Matrice de traçabilité
+### 3.5 Référencement des Données
+Conformément aux exigences d'architecture, aucune donnée brute ou fichier volumineux n'est stockée dans le dépôt Git. Le dépôt est réservé aux scripts (Python et Shell) et aux fichiers de configuration.
+Pour lier votre environnement GitHub à ces ressources distantes, suivez cette structure de référencement :
+
+- **1. Stockage Source (Injection Initiale)**
+    La source brute contenant les données d'évaluation des jeux vidéo est hébergée sur un compartiment de stockage d'objets (Amazon S3). Elle sert de point d'entrée unique pour le processus de seeding (peuplement initial) du Datalake.
+  - Type de ressource : Fichier de données brut (JSON compressé au format ZIP)
+  - Lien de téléchargement direct : [games_ratings.zip](https://blent-learning-user-ressources.s3.eu-west-3.amazonaws.com/projects/5df5dd/games_ratings.zip)
+  - Variable de configuration dédiée : 
+    - SEED_FILE (contient l'URL du fichier source pour la phase d'initialisation).
+- **2. Datalake (Collection NoSQL)**
+    La couche d'ingestion et de staging intermédiaire (Datalake) est déployée sur un cluster Cloud afin de garantir une scalabilité horizontale lors de la réception des flux JSON. Les paramètres de connexion à la  base de données peuvent être fournis sur demande ou par invitation.
+  - Plateforme d'hébergement : MongoDB Atlas (Database-as-a-Service)
+  - Console d'administration : [MongoDB Atlas Dashboard](https://cloud.mongodb.com/)
+  - Base de données : [db_datalake](https://cloud.mongodb.com/v2/69fd914f804694f3a1654b14#/explorer/69ff52e6597f58338f652fcb/db_datalake)
+  - Variables d'environnement requises (.env) : 
+    - MONGO_URI
+    - MONGO_DB
+    - MONGO_COLLECTION
+- **3. Data Warehouse (Table SQL)**
+    La couche de destination finale, contenant les structures modélisées et prêtes pour l'analyse décisionnelle (Business Intelligence), est hébergée sur une instance de base de données relationnelle managée. Les paramètres de connexion à la  base peuvent être fournis sur demande.
+  - Plateforme d'hébergement : PostgreSQL sur la plateforme Cloud Render
+  - Console d'administration : [Render Dashboard](https://dashboard.render.com/)
+  - Base de données : [db_dwh](https://dashboard.render.com/d/dpg-d7v2rvfaqgkc73d3su9g-a)
+  - Variables d'environnement requises (.env) : 
+    - POSTGRES_DSN 
+    - POSTGRES_TABLE_NAME
+
+
+<div style="page-break-after: always;"></div>
+
+
+### 3.6 Matrice de traçabilité
 
 
 <div style="font-size: 11px; line-height: 1.2;">
@@ -246,7 +287,7 @@ La table cible `daily_snapshot` possède le schéma suivant pour garantir l'hist
 *   **Cohérence du Schéma** : La fonction `init_dwh` dans `src/lib_etl.py` inclut une `PRIMARY KEY (product_id, snapshot_date)`. Cela correspond parfaitement à l'exigence d'éviter les doublons tout en permettant le suivi historique du même jeu sur différentes journées.
 
 
-### 3.6 Choix d'amélioration
+### 3.7 Choix d'amélioration
 1.  **Performance** : L'utilisation de `aggregate` côté MongoDB réduit le volume de données transférées vers Python.
 2.  **Robustesse** : Utilisation de SQL Alchemy avec gestion de transactions (`db_dwh.begin()`) pour garantir l'intégrité des chargements.
 3.  **Sécurité** : Configuration par variables d'environnement (dotenv).

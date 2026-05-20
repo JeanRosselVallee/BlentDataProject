@@ -221,11 +221,12 @@ data/*.json
 # Airflow
 .venv_airflow/
 airflow.env  # environment variables
-airflow_home/  # Ignore everything in folder ...
+
+# Ignore everything in folder ...
+airflow_home/  
+airflow_home/logs/
 airflow_home/airflow*.*
 airflow_home/webserver_config.py
-!airflow_home/airflow.cfg  # ... but airflow.cfg
 
-airflow_home/logs/
-airflow_home/webserver_config.py
-
+# don't ignore this file 
+!airflow_home/airflow.cfg

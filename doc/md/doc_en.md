@@ -24,8 +24,9 @@
   - [3.4 Data Schema](#34-data-schema)
     - [Datalake (MongoDB NoSQL)](#datalake-mongodb-nosql)
     - [Data Warehouse (SQL)](#data-warehouse-sql)
-  - [3.5 Traceability Matrix](#35-traceability-matrix)
-  - [3.6 Engineering Enhancements](#36-engineering-enhancements)
+  - [3.5 Data Referencing](#35-data-referencing)
+  - [3.6 Traceability Matrix](#36-traceability-matrix)
+  - [3.7 Engineering Enhancements](#37-engineering-enhancements)
 - [4 Deployment Guide (Administrator)](#4-deployment-guide-administrator)
   - [Step 1: Cloud Infrastructures Provisioning](#step-1-cloud-infrastructures-provisioning)
   - [Step 2: Codebase Cloning and Dependency Setup](#step-2-codebase-cloning-and-dependency-setup)
@@ -45,7 +46,7 @@
 ## 1. General Overview
 This document defines the architecture, configuration, and operation of the automated ETL pipeline. The primary objective is to extract raw customer reviews stored in a NoSQL database daily, identify community trends, and populate a relational Data Warehouse (DWH).
 
-<img src="./image_infographics.png" alt="Architecture Diagram" width="100%">
+<img src="../img/infographics.png" alt="Infographics" width="100%">
 
 
 ### Business Objectives
@@ -127,19 +128,26 @@ BlentDataProject/
 │   └── dags/                 # Airflow DAGs folder
 │       └── dag_task_etl.py   # Airflow 2.3 DAG definition & integrated documentation
 ├── doc/                      # Technical and functional specifications
+│   └── md/
+│       ├── doc_en.md         # Technical Documentation (English)
+│       ├── doc_fr.md         # Documentation Technique (Français)
+│       └── spec_fr.md        # Initial specifications and requirements
 ├── queries/                  # Maintenance scripts (MongoDB/SQL migrations)
+│   └── datalake/
+│       └── change_dates.mongodb.js # Date shifting script for MongoDB
 ├── scripts/
 │   └── run_etl.py            # Python script (Extraction, Calculations, Loading)
-├── src/                      # Core logic (lib_etl.py, config.py)
+├── src/                      # Core logic
+│   ├── config.py             # Configuration and environment loading
+│   └── lib_etl.py            # ETL library and helper functions
 ├── .env.template             # Secrets template (MongoDB, Postgres)
 ├── .gitignore                # Exclusions for virtual environments, logs, and .env
-├── airflow.env               # Path environment variables (PROJECT_ROOT, AIRFLOW_HOME)
+├── airflow.env.template      # Path environment variables (PROJECT_ROOT, AIRFLOW_HOME)
 ├── airflow_run_etl.sh        # Control script (Servers & execution modes)
 ├── README.md                 # Overview and quick-start guide
 ├── requirements_airflow.txt  # Orchestrator dependencies
 └── requirements_etl.txt      # ETL script dependencies
 ```
-
 
 <div style="page-break-after: always;"></div>
 
@@ -153,7 +161,7 @@ This section details data streams and architecture components mapped across diff
 * *Ref. Diagram 1: Ingestion workflow and timestamp-shifting script*
 
 
-<img src="./schema_1.png" alt="Architecture Diagram" width="100%">
+<img src="../img/schema_1.png" alt="Architecture Diagram 1" width="100%">
 
 
 #### 2. Manual Pipeline Execution (Profile: Developer)
@@ -162,7 +170,7 @@ This section details data streams and architecture components mapped across diff
 * *Ref. Diagram 2: Direct Extraction, Transformation, and Loading pipeline*
 
 
-<img src="./schema_2.png" alt="Architecture Diagram" width="100%">
+<img src="../img/schema_2.png" alt="Architecture Diagram 2" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -175,7 +183,7 @@ This section details data streams and architecture components mapped across diff
 * *Ref. Diagram 3: Airflow orchestration architecture and execution modes*
 
 
-<img src="./schema_3.png" alt="Architecture Diagram" width="100%">
+<img src="../img/schema_3.png" alt="Architecture Diagram 3" width="100%">
 
 
 #### 4. Data Consumption (Profile: Analysts & Decision Makers)
@@ -183,7 +191,7 @@ This section details data streams and architecture components mapped across diff
 * **Flow**: Render PostgreSQL DWH ➔ Standard SQL Queries ➔ Analytics Reports / Marketing Newsletters / Web Catalog App.
 * *Ref. Diagram 4: Final SQL data consumption workflow*
 
-<img src="./schema_4.png" alt="Architecture Diagram" width="100%">
+<img src="../img/schema_4.png" alt="Architecture Diagram 4" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -218,9 +226,46 @@ The target relational table `daily_snapshot` enforces the following schema to en
 
 <div style="page-break-after: always;"></div>
 
-### 3.5 Traceability Matrix
+
+### 3.5 Data Referencing
+In accordance with architectural requirements, no raw data or large files are stored in this Git repository. The repository is strictly reserved for scripts (Python and Shell) and configuration files.
+To link your GitHub environment to these remote resources, follow this referencing structure:
+
+- **1. Source Storage (Initial Injection)**
+ 
+    The raw source containing the video game rating data is hosted on an object storage bucket (Amazon S3). It serves as the single point of entry for the Datalake's seeding (initial population) process.
+  - Resource Type: Raw data file (JSON compressed in ZIP format)
+  - Direct Download Link: [games_ratings.zip](https://blent-learning-user-ressources.s3.eu-west-3.amazonaws.com/projects/5df5dd/games_ratings.zip)
+  - Dedicated Configuration Variable: SEED_FILE (contains the source file URL for the initialization phase).
+- **2. Datalake (NoSQL Collection)**
+ 
+    The ingestion and intermediate staging layer (Datalake) is deployed on a Cloud cluster to ensure horizontal scalability when receiving JSON streams. DB credentials are provided on request.
+  - Hosting Platform: MongoDB Atlas (Database-as-a-Service)
+  - Administration Console: [MongoDB Atlas Dashboard](https://cloud.mongodb.com/)
+  - Database: [db_datalake](https://cloud.mongodb.com/v2/69fd914f804694f3a1654b14#/explorer/69ff52e6597f58338f652fcb/db_datalake)
+  - Required Environment Variables (.env): 
+    - MONGO_URI
+    - MONGO_DB
+    - MONGO_COLLECTION
+- **3. Data Warehouse (SQL Table)**
+ 
+    The final destination layer, containing the modeled structures ready for business intelligence (BI) analysis, is hosted on a managed relational DB instance. DB credentials are provided on request.
+  - Hosting Platform: PostgreSQL on the Render Cloud platform
+  - Administration Console: [Render Dashboard](https://dashboard.render.com/)
+  - Database: [db_dwh](https://dashboard.render.com/d/dpg-d7v2rvfaqgkc73d3su9g-a)
+  - Required Environment Variables (.env): 
+    - POSTGRES_DSN 
+    - POSTGRES_TABLE_NAME
+
+
+<div style="page-break-after: always;"></div>
+
+
+### 3.6 Traceability Matrix
+
 
 <div style="font-size: 11px; line-height: 1.2;">
+
 
 | Requirement Segment | Specific Requirement | Script (folder) | Implementation Status & Comments |
 | :--- | :--- | :--- | :--- |
@@ -243,7 +288,7 @@ The target relational table `daily_snapshot` enforces the following schema to en
 * **Schema Consistency**: The database creation DDL block within `src/lib_etl.py` configures a composite `PRIMARY KEY (product_id, snapshot_date)`. This fulfills the requirement to eliminate multi-run data pollution while preserving true daily metrics tracking for individual games over time.
 
 
-### 3.6 Engineering Enhancements
+### 3.7 Engineering Enhancements
 1.  **Performance Optimization**: Offloading computations using the native MongoDB `aggregate` pipeline reduces network overhead and minimizes data transfer into Python.
 2.  **Pipeline Robustness**: Implementing contextual SQLAlchemy database transactions (`db_dwh.begin()`) protects data warehouse integrity during append sequences.
 3.  **Security Architecture**: Completely decoupled secret configurations via local `.env` environment isolation.

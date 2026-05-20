@@ -1,14 +1,10 @@
 <h1>Video Games ETL Pipeline</h1>
 <h2>Technical & Operational Documentation</h2>
 
-
-<p>
-<style>  
-    pre, code { font-size: 12px !important; }  /* for code blocks font=12px */
-    td {padding: 3px !important;}  /* for tables, horizontal padding = 3px */
+<style>
+    pre, code { font-size: 12px !important; } /* for code blocks font=12px */
+    td {padding: 3px !important;} /* for tables, horizontal padding = 3px */
 </style>
-</p>
-
 
 **Table of Contents**
 
@@ -157,7 +153,7 @@ This section details data streams and architecture components mapped across diff
 * *Ref. Diagram 1: Ingestion workflow and timestamp-shifting script*
 
 
-<img src="./architecture_schema_1.png" alt="Architecture Diagram" width="100%">
+<img src="./schema_1.png" alt="Architecture Diagram" width="100%">
 
 
 #### 2. Manual Pipeline Execution (Profile: Developer)
@@ -166,7 +162,7 @@ This section details data streams and architecture components mapped across diff
 * *Ref. Diagram 2: Direct Extraction, Transformation, and Loading pipeline*
 
 
-<img src="./architecture_schema_2.png" alt="Architecture Diagram" width="100%">
+<img src="./schema_2.png" alt="Architecture Diagram" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -179,7 +175,7 @@ This section details data streams and architecture components mapped across diff
 * *Ref. Diagram 3: Airflow orchestration architecture and execution modes*
 
 
-<img src="./architecture_schema_3.png" alt="Architecture Diagram" width="100%">
+<img src="./schema_3.png" alt="Architecture Diagram" width="100%">
 
 
 #### 4. Data Consumption (Profile: Analysts & Decision Makers)
@@ -187,7 +183,7 @@ This section details data streams and architecture components mapped across diff
 * **Flow**: Render PostgreSQL DWH ➔ Standard SQL Queries ➔ Analytics Reports / Marketing Newsletters / Web Catalog App.
 * *Ref. Diagram 4: Final SQL data consumption workflow*
 
-<img src="./architecture_schema_4.png" alt="Architecture Diagram" width="100%">
+<img src="./schema_4.png" alt="Architecture Diagram" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -222,14 +218,11 @@ The target relational table `daily_snapshot` enforces the following schema to en
 
 <div style="page-break-after: always;"></div>
 
-
 ### 3.5 Traceability Matrix
-
 
 <div style="font-size: 11px; line-height: 1.2;">
 
-
-| Requirement Segment | Specific Requirement | Script (directory) | Implementation Status & Comments |
+| Requirement Segment | Specific Requirement | Script (folder) | Implementation Status & Comments |
 | :--- | :--- | :--- | :--- |
 | **Source Data** | Raw dataset hosted in MongoDB | `lib_etl.py (src)` | Implemented. `connect_mongo` and `extract_and_transform` use `pymongo` to query the source cluster collection. |
 | **Data Warehouse** | SQL Compliant Infrastructure (PostgreSQL) | `lib_etl.py (src)` | Implemented. Uses `sqlalchemy` and `psycopg2` (via explicit connection string DSN) pointing to the Render PostgreSQL instance. |
@@ -238,7 +231,7 @@ The target relational table `daily_snapshot` enforces the following schema to en
 | **Data Schema Matching** | Product ID, Average, Count, Oldest/Newest bound ratings | `lib_etl.py (src)` | Implemented. `init_dwh` initializes the schema with appropriate constraints for `product_id`, `nb_reviews`, `average_rating`, `oldest_rating`, and `newest_rating`. |
 | **Idempotence Enforcer** | Handle duplicate execution runs cleanly | `lib_etl.py (src)` | Implemented. `upsert_dwh` executes an atomic row `DELETE` for the targeted `snapshot_date` right before triggering the DataFrame `append`. |
 | **Core App Logic** | Standalone Python execution script | `run_etl.py (src)` | Implemented. The primary CLI entry point script coordinates individual Extract, Transform, and Load phases sequentially. |
-| **Automation** | Orchestration & Job Scheduling engine | `airflow_run_etl.sh` | Implemented. Control Bash script manages local environment properties, background daemon systems, and explicit backfilling. |
+| **Automation** | Orchestration & Job Scheduling engine | `airflow_run _etl.sh` | Implemented. Control Bash script manages local environment properties, background daemon systems, and explicit backfilling. |
 | **Data Integrity** | Filter out unverified product reviews | `lib_etl.py (src)` | Implemented. The primary MongoDB server-side aggregation stage explicitly filters records where `verified: True`. |
 
 
@@ -264,7 +257,7 @@ The target relational table `daily_snapshot` enforces the following schema to en
 ### Step 1: Cloud Infrastructures Provisioning
 1.  **MongoDB Atlas (Source Datalake):**
     * Deploy a Shared/Free M0 tier cluster instance.
-    * Under **Network Access**, whitelist your runner IP address (or assign `0.0.0.0/0` during development testing).
+    * Under **Network Access**, whitelist your runner IP address (or `0.0.0.0/0` during development).
     * Under **Database Access**, create a dedicated application user account with `readWrite` access privileges (required to seed initial testing objects).
     * Retrieve your secure cluster connection URI string (`mongodb+srv://...`).
 2.  **Render PostgreSQL (Data Warehouse Target):**
@@ -300,7 +293,7 @@ chmod +x airflow_run_etl.sh
 This management script automatically orchestrates:
 1.  The provisioning of the `airflow_home` directory structures and initializing `airflow.db`.
 2.  The programmatic injection of an `admin` security profile account.
-3.  The clean initialization of the Airflow **Scheduler** and **Webserver** running on port 8080 as detached background daemons.
+3.  The clean initialization of the Airflow **Scheduler** and **Webserver** (Port 8080) as background daemons.
 
 
 <div style="page-break-after: always;"></div>
@@ -334,11 +327,11 @@ If testing datasets fall outside your 6-month processing calculation scope:
 
 
 ### Logical Data Flow Sequencing
-1.  **Extract**: Execute a targeted aggregation pipeline matching documents where `unixReviewTime` is equal to or greater than the historical constraint boundaries ($Date - 6 \text{ Months}$) while verifying that `verified: true`.
+1.  **Extract**: Execute a targeted aggregation pipeline matching documents where `unixReviewTime` (Date - 6 months) while verifying that `verified: true`.
 2.  **Transform**: 
     * Sort records chronologically.
     * Group values under distinct `asin` document clusters.
-    * Compute arithmetic rating means and isolate initial boundaries using `$first` and `$last` operators.
+    * Compute arithmetic rating means and isolate initial boundaries (`$first`, `$last`).
     * Order structural output by `average_rating` and `nb_reviews` fields descending.
     * Enforce a processing limit constraint to truncate results down to the top 15 records.
 3.  **Load**:

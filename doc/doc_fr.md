@@ -1,14 +1,10 @@
 <h1>Pipeline ETL Jeux-Vidéo</h1>
 <h2>Documentation Technique & Opérationnelle</h2>
 
-
-<p>
-<style>  
-    pre, code { font-size: 12px !important; }  /* for code blocks font=12px */
-    td {padding: 3px !important;}  /* for tables, horizontal padding = 3px */
+<style>
+    pre, code { font-size: 12px !important; } /* for code blocks font=12px */
+    td {padding: 3px !important;} /* for tables, horizontal padding = 3px */
 </style>
-</p>
-
 
 **Table de matières**
 
@@ -157,7 +153,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *    *Cf. Schéma 1 : Flux d'ingestion et script de postdatage*
 
 
-<img src="./architecture_schema_1.png" alt="Schéma d'architecture" width="100%">
+<img src="./schema_1.png" alt="Schéma d'architecture" width="100%">
 
 
 #### 2. Exécution Manuelle du Pipeline (Profil : Développeur)
@@ -166,7 +162,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *   *Cf. Schéma 2 : Pipeline d'extraction, transformation et chargement direct*
 
 
-<img src="./architecture_schema_2.png" alt="Schéma d'architecture" width="100%">
+<img src="./schema_2.png" alt="Schéma d'architecture" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -179,7 +175,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *   *Cf. Schéma 3 : Architecture d'orchestration Airflow et modes d'exécution*
 
 
-<img src="./architecture_schema_3.png" alt="Schéma d'architecture" width="100%">
+<img src="./schema_3.png" alt="Schéma d'architecture" width="100%">
 
 
 #### 4. Exploitation de la Donnée (Profil : Analystes & Décideurs)
@@ -187,7 +183,7 @@ Cette section détaille les flux de données et les interactions selon les diff�
 *   **Flux** : DWH PostgreSQL (Render) ➔ Requêtes SQL ➔ Rapports / Newsletters / Interface Web.
 *   *Cf. Schéma 4 : Flux de consommation finale des données SQL*
 
-<img src="./architecture_schema_4.png" alt="Schéma d'architecture" width="100%">
+<img src="./schema_4.png" alt="Schéma d'architecture" width="100%">
 
 
 <div style="page-break-after: always;"></div>
@@ -301,7 +297,6 @@ Ce script automatise :
 1.  La création du répertoire `airflow_home` et de la base `airflow.db`.
 2.  La création de l'utilisateur `admin`.
 3.  Le lancement du **Scheduler** et du **Webserver** (Port 8080) en mode démon.
-
 
 <div style="page-break-after: always;"></div>
 
